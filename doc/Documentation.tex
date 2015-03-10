@@ -1,0 +1,132 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+
+\begin{document}
+
+\vspace*{3ex}
+\begin{flushright}
+{\large 3 March 2015}
+\end{flushright}
+
+\begin{flushleft}
+{\large Jakub Ciecierski\\
+
+}
+\end{flushleft}
+
+\hskip3cm
+
+\begin{center}
+
+\Large {\bf
+	Cellular automaton
+}
+
+\Large {\bf 
+	Requirement specification 
+}
+
+\vskip2ex
+
+
+\end{center}
+
+\vskip20ex
+
+\section{Glossary} \par
+
+
+\setlength{\parindent}{5ex}
+\Large {\bf Cellular automaton } - consists of a \textit{grid} of \textit{cells}, each in one of a finite number of \textit{states} (e.g. on and off). 
+	A new \textit{generation} is created, according to some fixed
+	\textit{rule} that determines the new state of each cell. \\
+
+
+\Large {\bf 
+	Cell 
+}	
+	- can be in one of many states,
+	in case of binary cellular automaton we only have two states for each cell, namely on and off.
+	For each cell, a set of cells called its
+	\textit{neighborhood} is defined relative to that cell.	\\
+
+
+\Large {\bf 
+	Grid
+} 	
+	- can be in any finite number of dimensions. Consists of cells.
+	An initial state is selected by assigning a state for each cell \\
+
+
+\Large {\bf Rule
+} 
+	- determines the new state of each cell in terms of the current state
+	of the cell and the states of the cells in its neighborhood.
+	Typically, the rule for updating the state of cells is the same for each
+	cell, and is applied to the whole grid simultaneously, such application of
+	a rule to the entire grid, creates a new \textit{generation} \\
+	
+\Large {\bf Neighborhood
+} 
+	-  have possibility to introduce rules which determine the new state of 
+	each cell. Defined under different environments such as:
+	\begin{itemize}
+	
+	\item	
+		4 points neighborhood \hspace{35pt} 
+			 \includegraphics[width=20mm]{images/4_neigh.png} \\
+	
+
+	
+	\item	
+		8 points neighborhood \hspace{35pt}
+			\includegraphics[width=20mm]{images/8_neigh.png} \\
+	
+	\item	
+		24 points neighborhood \hspace{35pt}
+			\includegraphics[width=20mm]{images/24_neigh.png} \\				
+	\end{itemize}
+
+
+
+
+.\\\\\\\\\\\\\\\\Introduction
+	Purpose
+	Definitions
+	System overview
+	References
+	
+Overall description
+	Product perspective
+		System Interfaces
+		User Interfaces
+		Hardware interfaces
+		Software interfaces
+		Communication Interfaces
+		Memory Constraints
+		Operations
+		Site Adaptation Requirements
+	Product functions
+	User characteristics
+	Constraints, assumptions and dependencies
+	
+Specific requirements
+	External interface requirements
+	Functional requirements
+	Performance requirements
+	Design constraints
+		Standards Compliance0
+	Logical database requirement
+	Software System attributes
+		Reliability
+		Availability
+		Security
+		Maintainability
+		Portability
+	Other requirements
+
+
+
+
+\end{document}
