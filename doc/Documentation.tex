@@ -98,69 +98,107 @@ will allow user to create, save and edit rules and observe new generations on th
 \Large {\bf Pattern
 } - is a combination of specific layout of cells on the grid and the set of rules to be applied for them.
 
+
+
+
 \section{Description of requirements}
 
-\hspace{15pt} The automaton will consist
-of binary set of states (e.i. on / off) and will operate in 3 different environments:
+\hspace{15pt} The automaton will consist of binary set of states 
+(e.i. on / off) and will operate in 3 different environments:
 \begin{itemize}
 	\item 4 points neighborhood.
 	\item 8 points neighborhood.
 	\item 24 points neighborhood.
 \end{itemize}
+
 \par The application will allow user to create, save and edit rules based on this environments and of course observe each generation on the two dimensional finite in size grid of cells
 (the grid will have wrapping option to simulate infinite size - the left edge will be connected with right edge).
+
 \par The user will be able to draw cells on the grid and save the state of grid into patterns.
 The user can easily move around the grid, zoom in and out.
 
 
-
-\section{Description of requirements}
-
-
-
 \section{User stories}
-As... I want... because
+	Grid editor
+\begin{itemize}	
+	\item 
+		As a user, 
+		I want to open grid editor,
+		in order to change the grid size.
+
+	\item 
+		As a user, 
+		I want to open grid editor,
+		in order to change color of each state of a cell.
+
+	\item 
+		As a user, 
+		I want to open grid editor,
+		in order to enable/disable wrapping option.
+
+	\vspace{30pt}
+	Rule editor
+	
+	\item 
+		As a user,
+		I want to open rule editor,
+		in order to create new rule.
+		
+	\item 
+		As a user,
+		I want to choose neighborhood environment,
+		in order to add new rule.
+		
+	\item 
+		As a user,
+		I want to define specific transition for a given state of cell,
+		in order to generate new state.
+		
+	\item 
+		As a user,
+		I want to click save/save as button in rule editor,
+		in order to save current rule.
+
+	\item 
+		As a user,
+		I want to click load button in rule editor,
+		in order to load current rule and possible edit it.
+
+	\vspace{30pt}
+	Application option
+	
+	\item 
+		As a user,
+		I want to move View components (e.g. rule editor / grid editor / browser),
+		in order to position them in different location.
+	\item 
+		As a user,
+		I want to click next generation button 
+		to compute next generation
+	\item 
+		As a user,
+		I want to click next N generations button,
+		to compute next N generations.
+	\item 
+		As a user,
+		I want to set the number of generation to skip by clicking next N generations button,
+		in order to compute next N generations.
+	\item 
+		As a user,
+		I want set the speed of computation of next generation in running mode,
+		to customize the speed of which the automaton is transitioning.
+
+\end{itemize}
+
+
+\section{Requirements of specification}
+
+\begin{itemize}
+	\item A	
+\end{itemize}
+
+\section{GUI mock-up}
 
 \section{Evaluation of solution}
-
-
-.
-\\\\\\\\\\\\\\\\Introduction
-	Purpose
-	Definitions
-	System overview
-	References
-	
-Overall description
-	Product perspective
-		System Interfaces
-		User Interfaces
-		Hardware interfaces
-		Software interfaces
-		Communication Interfaces
-		Memory Constraints
-		Operations
-		Site Adaptation Requirements
-	Product functions
-	User characteristics
-	Constraints, assumptions and dependencies
-	
-Specific requirements
-	External interface requirements
-	Functional requirements
-	Performance requirements
-	Design constraints
-		Standards Compliance
-	Logical database requirement
-	Software System attributes
-		Reliability
-		Availability
-		Security
-		Maintainability
-		Portability
-	Other requirements
-
-
-
 
 \end{document}
