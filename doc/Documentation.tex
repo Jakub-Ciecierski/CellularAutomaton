@@ -34,11 +34,18 @@
 
 \vskip20ex
 
+\newpage
+
+\section{Goal} 
+\Large
+\hspace{15pt}The goal of this project is to create an application for cellular automaton. The application 
+will allow user to create, save and edit rules and observe new generations on the grid of cells.
+
 \section{Glossary} \par
 
 
 \setlength{\parindent}{5ex}
-\Large {\bf Cellular automaton } - consists of a \textit{grid} of \textit{cells}, each in one of a finite number of \textit{states} (e.g. on and off). 
+\Large {\bf \hspace{15pt} Cellular automaton } - consists of a \textit{grid} of \textit{cells}, each in one of a finite number of \textit{states} (e.g. on and off). 
 	A new \textit{generation} is created, according to some fixed
 	\textit{rule} that determines the new state of each cell. \\
 
@@ -66,7 +73,9 @@
 	Typically, the rule for updating the state of cells is the same for each
 	cell, and is applied to the whole grid simultaneously, such application of
 	a rule to the entire grid, creates a new \textit{generation} \\
-	
+
+\newpage	
+
 \Large {\bf Neighborhood
 } 
 	-  have possibility to introduce rules which determine the new state of 
@@ -76,22 +85,47 @@
 	\item	
 		4 points neighborhood \hspace{35pt} 
 			 \includegraphics[width=20mm]{images/4_neigh.png} \\
-	
 
-	
 	\item	
 		8 points neighborhood \hspace{35pt}
 			\includegraphics[width=20mm]{images/8_neigh.png} \\
-	
+
 	\item	
 		24 points neighborhood \hspace{35pt}
 			\includegraphics[width=20mm]{images/24_neigh.png} \\				
 	\end{itemize}
 
+\Large {\bf Pattern
+} - is a combination of specific layout of cells on the grid and the set of rules to be applied for them.
+
+\section{Description of requirements}
+
+\hspace{15pt} The automaton will consist
+of binary set of states (e.i. on / off) and will operate in 3 different environments:
+\begin{itemize}
+	\item 4 points neighborhood.
+	\item 8 points neighborhood.
+	\item 24 points neighborhood.
+\end{itemize}
+\par The application will allow user to create, save and edit rules based on this environments and of course observe each generation on the two dimensional finite in size grid of cells
+(the grid will have wrapping option to simulate infinite size - the left edge will be connected with right edge).
+\par The user will be able to draw cells on the grid and save the state of grid into patterns.
+The user can easily move around the grid, zoom in and out.
 
 
 
-.\\\\\\\\\\\\\\\\Introduction
+\section{Description of requirements}
+
+
+
+\section{User stories}
+As... I want... because
+
+\section{Evaluation of solution}
+
+
+.
+\\\\\\\\\\\\\\\\Introduction
 	Purpose
 	Definitions
 	System overview
@@ -116,7 +150,7 @@ Specific requirements
 	Functional requirements
 	Performance requirements
 	Design constraints
-		Standards Compliance0
+		Standards Compliance
 	Logical database requirement
 	Software System attributes
 		Reliability
