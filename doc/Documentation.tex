@@ -36,11 +36,6 @@
 
 \newpage
 
-\section{Goal} 
-\Large
-\hspace{15pt}The goal of this project is to create an application for cellular automaton. The application 
-will allow user to create, save and edit rules and observe new generations on the grid of cells.
-
 \section{Glossary} \par
 
 
@@ -79,7 +74,8 @@ will allow user to create, save and edit rules and observe new generations on th
 \Large {\bf Neighborhood
 } 
 	-  have possibility to introduce rules which determine the new state of 
-	each cell. Defined under different environments such as:
+	each cell. The transition of a cell is based on the states of his neighbors which are
+	defined under different environments such as:
 	\begin{itemize}
 	
 	\item	
@@ -98,12 +94,13 @@ will allow user to create, save and edit rules and observe new generations on th
 \Large {\bf Pattern
 } - is a combination of specific layout of cells on the grid and the set of rules to be applied for them.
 
+\newpage
 
+\section{What is the project about}
+What is cellular automaton?
+\section{Goal}
 
-
-\section{Description of requirements}
-
-\hspace{15pt} The automaton will consist of binary set of states 
+\hspace{15pt}The goal of this project is to create an application for cellular automaton. The automaton will consist of grid of cells that can be in either of two states
 (e.i. on / off) and will operate in 3 different environments:
 \begin{itemize}
 	\item 4 points neighborhood.
@@ -191,11 +188,215 @@ The user can easily move around the grid, zoom in and out.
 \end{itemize}
 
 
-\section{Requirements of specification}
+\section{Functional Requirements}
 
+
+\begin{center}
+
+	\begin{tabular}{| l | p{7cm} | p{5cm} | l |}
+	
+		\hline
+	  	ID & Requirement & Comments & Priority \\
+
+		\hline
+		
+		1 & 
+		The system provides a Grid options
+		allowing for changing the size, colour of cells and
+		enabling/disabling wrapping option&
+		N/A &
+		1 
+		\\ \hline
+
+		2 & 
+		The system provides a Rule editor in which
+		the user can create, edit and save rules. & 
+		N/A &
+		1 
+		\\ \hline
+		
+		2.1 & 
+		By clicking create button in Rule editor, the application will open a fresh rule
+		creation window & 
+		N/A &
+		1 
+		\\ \hline
+
+		2.2 & 
+		By clicking load button in Rule editor, the application will open a browser which
+		will allow the user to find saved rules & 
+		N/A &
+		1 
+		\\ \hline
+
+		2.3 & 
+		By clicking save button in Rule editor, the application will make sure that name for the
+		rule is provided and then will save the rule in specified by the user location & 
+		N/A &
+		1 
+		\\ \hline
+
+		2.4 & 
+		The system provides three different neighborhood environments
+		in which the user can create rules, 4-point, 8-point, 24-point  & 
+		See Glossary / Neighborhood for more information &
+		1 
+		\\ \hline
+
+
+	  \hline
+	\end{tabular}
+
+	\begin{tabular}{| l | p{7cm} | p{5cm} | l |}
+	
+		\hline
+	  	ID & Requirement & Comments & Priority \\
+
+		\hline
+		2.5 & 
+		The application provides special file extension for saving and keeping rules & 
+		N/A &
+		1 
+		\\ \hline
+				
+		2.6 &
+		For 4-point and 8-point environments the system should provide a way to create rules
+		in which positions of neighbors relative to the cell are considered. If
+		a transition is not defined then this transition does not change the state of current cell
+		 &
+		The user can choose to what state current cell transitions, based on this cell's state 
+		and states of his neighbors &
+		1 
+		\\ \hline
+
+		2.7 &
+		For 24-point environment system should provide a may of creating rules in which 
+		the user specifies number of neighbors in each column
+		&	
+		This environment can be represented as a 5 by 5 matrix with the current cell in the middle &
+		1 
+		\\ \hline
+
+		2.8 &
+		For 4-point, 8-point and 24-point environments the system should provide a simplified
+		mode of creating rules in which the user inputs only number of neighbors in given state
+		in the neighborhood for a current cell state. &
+		The user inputs number of neighbors with given state which should appear for the
+		cell to transition to another specified state &
+		2 
+		\\ \hline
+				
+		3.1 & 
+		The system provides a step-by-step button which computes next generation & 
+		N/A &
+		1 
+		\\ \hline
+		
+		3.2 & 
+		The system provides next-N button which computes next N generations,
+		the N must be easily chosen by the user & 
+		N/A &
+		1
+		\\ \hline
+
+
+
+	\end{tabular}
+
+	\begin{tabular}{| l | p{7cm} | p{5cm} | l |}
+		\hline
+	  	ID & Requirement & Comments & Priority \\
+	
+		\hline
+		3.3 & 
+		The system provides a run button which will
+		start the animation of consecutive generations & 
+		N/A &
+		1
+		\\ \hline
+		
+		3.4 & 
+		The system provides way to change speed of which the animation is drawn in the 'run' mode & 
+		N/A &
+		1
+		\\ \hline
+
+		4.1 & 
+		The application allow user to draw cells on the grid & 
+		N/A &
+		1
+		\\ \hline		
+
+		4.2 & 
+		The application provides a way for user to save grid state into patterns, additionally
+		the pattern can have a rule attached to it, which later can be loaded into the grid.  & 
+		
+		The grid state consists of its size, states of cells and other grid options.&
+		1
+		\\ \hline				
+
+		4.3 & 
+		The application provides Browser window in which the 
+		user can browse saved rules and patterns & 
+		N/A &
+		1 
+		\\ \hline
+	
+		4.4 & 
+		The application allows the user to have multiple grids opened. &
+		N/A &
+		2 
+		\\ \hline
+		4.5 & 
+		The application should have example of simple game of Life &
+		N/A &
+		2 
+		\\ \hline
+	
+	\end{tabular}
+
+\end{center}
+
+\newpage
+
+\section{Non Functional Requirements}
 \begin{itemize}
-	\item A	
-\end{itemize}
+	\item \Large { \bf Usability} 
+
+	The user interface should contain the following View components but not limited to:
+	\begin{itemize}
+		\item Browser of saved rules and patterns.
+		\item Grid.
+		\item Rule editor.
+	\end{itemize}
+	Each of the View components should be able to be disconnected from the main application
+	and moved around freely. These components should also be able to be attached to the sides
+	of the main window of the application(left, center, right, bottom).
+	
+	The main window should provide easily accessible menu and buttons for options, guides
+	and running the grid animations features. The application should provide a way for the user
+	to set up key binds(short cuts) for all buttons in the system.
+	
+	Guides for setting up the rules are to be thoroughly explained.
+	
+	In the first launch of the application the user should be welcomed with a window
+	which can lead the user through the application and load some examples provided in the 
+	system.
+	
+	The user must be informed of any loading time.
+
+	\item \Large {\bf Reliability }
+	
+	Reliability is
+	
+	\item \Large {\bf Performance }
+	The application is assumed not be heavy on computations within the start-up time,
+	thus the time for the application to start should be very low.
+	
+	The response time of loading any view components to the application should not be noticeable by the user
+	
+	
+\end{itemize} 
 
 \section{GUI mock-up}
 
