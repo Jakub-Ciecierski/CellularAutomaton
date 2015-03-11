@@ -78,8 +78,6 @@
 \section{Document metric}
 
 
-
-
 \begin{table}[h]
 \hspace*{-3.1cm}
 \large
@@ -88,8 +86,8 @@
 \hline
 \multicolumn{6}{|l|}{\cellcolor[HTML]{C0C0C0}Document metric}                                                                                                                                         \\ \hline
 Project:       & Cellular Automaton                                                       & \cellcolor[HTML]{C0C0C0}Company: & \multicolumn{3}{l|}{WUT}                                               \\ \hline
-Name:          & \multicolumn{5}{l|}{Requirement specification}                                                                                                                                       \\ \tabucline[2pt]{-}
-Topics:        & \multicolumn{5}{l|}{Requirement specification}                                                                                                                                       \\ \hline
+Name:          & \multicolumn{5}{l|}{Requirement specification}                                                                                                                                       \\ \hline
+Topics:        & \multicolumn{5}{l|}{Analysis of the product}                                                                                                                                       \\ \hline
 Author:        & \multicolumn{5}{l|}{Jakub Ciecierski}                                                                                                                                                \\ \hline
 File:          & \multicolumn{5}{l|}{requirement\_specification}                                                                                                                                      \\ \hline
 Version no:    & 0.1                                                                      & \cellcolor[HTML]{C0C0C0}Status:  & Under development & \cellcolor[HTML]{C0C0C0}Opening date: & 2015-03-03 \\ \hline
@@ -274,9 +272,15 @@ The user can easily move around the grid, zoom in and out.
 		
 \end{itemize}
 
+\newpage
 
 \section{Functional Requirements}
-
+Priority
+\begin{itemize} 
+\item 1 - must be implemented
+\item 2 - can be implemented optionally 
+\item 3 - is a nice addition, but not needed.
+\end{itemize} 
 
 \begin{center}
 \hspace*{-2.1cm}
@@ -284,7 +288,6 @@ The user can easily move around the grid, zoom in and out.
 	
 		\hline
 	  	ID & Requirement & Comments & Priority \\
-
 		\hline
 		
 		1 & 
@@ -299,43 +302,37 @@ The user can easily move around the grid, zoom in and out.
 		1.1 & 
 		The system should allow grid maneuvers, zooming in/out and if the
 		entire grid is not visible in one screen, possibility of moving around the grid&
-		N/A &
+		 &
 		1 
 		\\ \hline
 
 		2 & 
 		The system provides a Rule editor in which
 		the user can create, edit and save rules. & 
-		N/A &
+		 &
 		1 
 		\\ \hline
 		
 		2.1 & 
 		By clicking create rule button in Rule editor, the application will open a fresh rule
 		creation window & 
-		N/A &
+		 &
 		1 
 		\\ \hline
 
 		2.2 & 
 		By clicking load button in Rule editor, the application will open a browser which
 		will allow the user to find saved rules & 
-		N/A &
+		 &
 		1 
 		\\ \hline
 
 		2.3 & 
 		By clicking save button in Rule editor, the application will make sure that name for the
 		rule is provided and then will save the rule in specified by the user location & 
-		N/A &
+		 &
 		1 
-		\\ \hline
 
-		2.4 & 
-		The system provides three different neighborhood environments
-		in which the user can create rules, 4-point, 8-point, 24-point  & 
-		See Glossary / Neighborhood for more information &
-		1 
 		\\ \hline
 
 
@@ -343,14 +340,21 @@ The user can easily move around the grid, zoom in and out.
 	\end{tabular}
 \hspace*{-2.1cm}
 	\begin{tabular}{| l | p{7cm} | p{5cm} | l |}
-	
 		\hline
 	  	ID & Requirement & Comments & Priority \\
-
 		\hline
+
+		2.4 & 
+		The system provides three different neighborhood environments
+		in which the user can create rules, 4-point, 8-point, 24-point  & 
+		See Glossary / Neighborhood for more information &
+		1 
+		\\ \hline
+		
+
 		2.5 & 
 		The application provides special file extension for saving and keeping rules & 
-		N/A &
+		 &
 		1 
 		\\ \hline
 				
@@ -383,15 +387,9 @@ The user can easily move around the grid, zoom in and out.
 				
 		3.1 & 
 		The system provides a step-by-step button which computes next generation & 
-		N/A &
+		 &
 		1 
-		\\ \hline
-		
-		3.2 & 
-		The system provides next-N button which computes next N generations,
-		the N must be easily chosen by the user & 
-		N/A &
-		1
+
 		\\ \hline
 
 
@@ -401,24 +399,31 @@ The user can easily move around the grid, zoom in and out.
 	\begin{tabular}{| l | p{7cm} | p{5cm} | l |}
 		\hline
 	  	ID & Requirement & Comments & Priority \\
-	
-		\hline
+		 \hline
+
+		3.2 & 
+		The system provides next-N button which computes next N generations,
+		the N must be easily chosen by the user & 
+	 		&
+		1
+		\\ \hline
+
 		3.3 & 
 		The system provides a run button which will
 		start the animation of consecutive generations & 
-		N/A &
+		 &
 		1
 		\\ \hline
 		
 		3.4 & 
 		The system provides way to change speed of which the animation is drawn in the 'run' mode & 
-		N/A &
+		 &
 		1
 		\\ \hline
 
 		4.1 & 
 		The application allow user to draw cells on the grid & 
-		N/A &
+		 &
 		1
 		\\ \hline		
 
@@ -433,25 +438,20 @@ The user can easily move around the grid, zoom in and out.
 		4.3 & 
 		The application provides Browser window in which the 
 		user can browse saved rules and patterns & 
-		N/A &
+		 &
 		1 
 		\\ \hline
 	
 		4.4 & 
 		The application allows the user to have multiple grids opened. &
-		N/A &
+		 &
 		2 
 		\\ \hline
+
 		4.5 & 
 		The application should have example of simple game of Life called
 		Conway's Game of Life &
-		N/A &
-		2 
-		
-		\\ \hline
-		4.6 & 
-		The application should &
-		N/A &
+		 &
 		2 
 		\\ \hline
 	
