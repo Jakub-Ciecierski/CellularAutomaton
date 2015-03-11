@@ -1,6 +1,8 @@
 \documentclass{article}
 
+\usepackage{pdfpages}
 \usepackage{graphicx}
+\usepackage[export]{adjustbox}
 
 \begin{document}
 
@@ -29,12 +31,54 @@
 
 \vskip2ex
 
-
+\vspace{60pt}
+\includegraphics[width=80mm]{images/mini.png} \\
 \end{center}
 
 \vskip20ex
 
 \newpage
+\tableofcontents
+\newpage
+\section{Schedule} \par
+
+\begin{center}
+
+	\begin{tabular}{| l | p{7cm} |}
+
+		\hline
+	  	2015-04-02 & Technical project \\
+		
+		\hline
+	  	2015-04-23 & Code of modules\\
+	
+		\hline
+		2015-04-30 & version 0.98\\
+
+		\hline
+		2015-05-07 & version 0.99\\	
+		
+		\hline
+		2015-05-14 & version 1.00\\
+		
+		\hline
+		2015-05-28 & Test report\\
+		
+		\hline
+		2015-06-11 & Acceptation \\
+		
+		\hline
+	
+	\end{tabular}
+
+\end{center}
+
+\section{Document metric}
+
+
+
+\newpage
+
 
 \section{Glossary} \par
 
@@ -96,8 +140,6 @@
 
 \newpage
 
-\section{What is the project about}
-What is cellular automaton?
 \section{Goal}
 
 \hspace{15pt}The goal of this project is to create an application for cellular automaton. The automaton will consist of grid of cells that can be in either of two states
@@ -114,7 +156,7 @@ What is cellular automaton?
 \par The user will be able to draw cells on the grid and save the state of grid into patterns.
 The user can easily move around the grid, zoom in and out.
 
-
+\newpage
 \section{User stories}
 	Grid editor
 \begin{itemize}	
@@ -132,6 +174,16 @@ The user can easily move around the grid, zoom in and out.
 		As a user, 
 		I want to open grid editor,
 		in order to enable/disable wrapping option.
+
+	\item 
+		As a user, 
+		I want to scroll my mouse roll over the grid,
+		in order to adjust the scale of the grid.
+
+	\item 
+		As a user, 
+		I want to select the brush,
+		in order to draw cells on the grid.
 
 	\vspace{30pt}
 	Rule editor
@@ -183,8 +235,24 @@ The user can easily move around the grid, zoom in and out.
 	\item 
 		As a user,
 		I want set the speed of computation of next generation in running mode,
-		to customize the speed of which the automaton is transitioning.
+		to customize the speed of which the automaton is transitioning. \\
+		
+		Pattern editor
+	\item 
+		As a user,
+		I want to save a current state of grid into a pattern,
+		so that later I can load it into the program.
 
+	\item 
+		As a user,
+		I want to browse for my patterns in the browser window,
+		in order to load it to the pattern editor.
+
+	\item 
+		As a user,
+		I want to click change rule in the pattern editor,
+		in order to add a rule of my choosing to that pattern.
+		
 \end{itemize}
 
 
@@ -192,7 +260,7 @@ The user can easily move around the grid, zoom in and out.
 
 
 \begin{center}
-
+\hspace*{-2.1cm}
 	\begin{tabular}{| l | p{7cm} | p{5cm} | l |}
 	
 		\hline
@@ -204,6 +272,14 @@ The user can easily move around the grid, zoom in and out.
 		The system provides a Grid options
 		allowing for changing the size, colour of cells and
 		enabling/disabling wrapping option&
+		The colour of cells represent a state of the cell.
+		In other words the user can choose in what state to put a cell into. &
+		1 
+		\\ \hline
+
+		1.1 & 
+		The system should allow grid maneuvers, zooming in/out and if the
+		entire grid is not visible in one screen, possibility of moving around the grid&
 		N/A &
 		1 
 		\\ \hline
@@ -216,7 +292,7 @@ The user can easily move around the grid, zoom in and out.
 		\\ \hline
 		
 		2.1 & 
-		By clicking create button in Rule editor, the application will open a fresh rule
+		By clicking create rule button in Rule editor, the application will open a fresh rule
 		creation window & 
 		N/A &
 		1 
@@ -246,7 +322,7 @@ The user can easily move around the grid, zoom in and out.
 
 	  \hline
 	\end{tabular}
-
+\hspace*{-2.1cm}
 	\begin{tabular}{| l | p{7cm} | p{5cm} | l |}
 	
 		\hline
@@ -302,7 +378,7 @@ The user can easily move around the grid, zoom in and out.
 
 
 	\end{tabular}
-
+\hspace*{-2.1cm}
 	\begin{tabular}{| l | p{7cm} | p{5cm} | l |}
 		\hline
 	  	ID & Requirement & Comments & Priority \\
@@ -330,9 +406,9 @@ The user can easily move around the grid, zoom in and out.
 		4.2 & 
 		The application provides a way for user to save grid state into patterns, additionally
 		the pattern can have a rule attached to it, which later can be loaded into the grid.  & 
-		
+		A pattern editor view component should be created.
 		The grid state consists of its size, states of cells and other grid options.&
-		1
+		2
 		\\ \hline				
 
 		4.3 & 
@@ -349,6 +425,12 @@ The user can easily move around the grid, zoom in and out.
 		\\ \hline
 		4.5 & 
 		The application should have example of simple game of Life &
+		N/A &
+		2 
+		
+		\\ \hline
+		4.6 & 
+		The application should &
 		N/A &
 		2 
 		\\ \hline
@@ -368,6 +450,7 @@ The user can easily move around the grid, zoom in and out.
 		\item Browser of saved rules and patterns.
 		\item Grid.
 		\item Rule editor.
+		\item Pattern editor.
 	\end{itemize}
 	Each of the View components should be able to be disconnected from the main application
 	and moved around freely. These components should also be able to be attached to the sides
@@ -385,21 +468,45 @@ The user can easily move around the grid, zoom in and out.
 	
 	The user must be informed of any loading time.
 
-	\item \Large {\bf Reliability }
-	
-	Reliability is
 	
 	\item \Large {\bf Performance }
 	The application is assumed not be heavy on computations within the start-up time,
-	thus the time for the application to start should be very low.
-	
-	The response time of loading any view components to the application should not be noticeable by the user
+	thus the time for the application to start should not exceed 5 seconds.
+
+	The response time of loading any view components to the application should not be noticeable by the user(within 1-2 seconds maximal)
 	
 	
 \end{itemize} 
 
-\section{GUI mock-up}
+\section{Graphical User Interface}
+	The GUI should be responsive, clear and editable for user's needs.
+	
+	The interface should provide an easy way for the user to position each component of the view as he pleases.
+	There should be places where the user can attach these components (left, bottom, right or center of the main window of the application).
+	These components can also be disconnected and flow as separate windows.
+	
+	The browser should allow for searching of patterns and rules.
+	The rules can be easily applied using double-click with left mouse button
+	or right click and selecting the apply feature.
+	The rules can also be put into edit from the browser, either by selecting an
+	appropriate 'Edit' button in the right-click menu, or by dragging the rule into the
+	Rule editor window. \\
+	The Patterns should work in similar way. After loading a pattern into the editor, user should be able to change a rule and grid associated with that pattern.
+	
 
-\section{Evaluation of solution}
+	\begin{figure}[h!]
+	  \caption{GUI mock-up}
+		\includegraphics[page=1,width=1.5\textwidth, center]{images/gui_mockup.pdf}
+	  \label{fig:gui}
+	\end{figure}
+
+	In figure ~\ref{fig:gui} we see an example of components alignment
+	
+
+\section{Risk analysis}
+
+The biggest risk of this project is not finishing the application in time.
+The developer should make sure that all requirements of highest priority are implemented
+first.
 
 \end{document}
