@@ -35,7 +35,7 @@ namespace CellularAutomatonConsole
                 automaton.NextGeneration();
                 automaton.Show();
 
-                Thread.Sleep(2000);
+                Thread.Sleep(500);
                 Console.Clear();
             }
         }

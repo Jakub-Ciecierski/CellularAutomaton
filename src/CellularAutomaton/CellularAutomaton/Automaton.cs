@@ -61,12 +61,29 @@ namespace CellularAutomaton
         /// </summary>
         public void NextGeneration()
         {
+            // prepapre tmp state array
+            int[][] tmpStates = new int[grid.Height][];
+            for (int i = 0; i < grid.Height; i++)
+            {
+                tmpStates[i] = new int[grid.Width];
+            }
+
+            // Compute new state
             for (int i = 0; i < grid.Height; i++)
             {
                 for (int j = 0; j < grid.Width; j++)
                 {
                     Neighborhood nb = grid.GetNeighborhood(i, j, CurrentRule.NeighborhoodType);
-                    grid.SetState(i, j, CurrentRule.Apply(nb));
+                    tmpStates[i][j] = CurrentRule.Apply(nb);
+                }
+            }
+
+            // replace new states
+            for (int i = 0; i < grid.Height; i++)
+            {
+                for (int j = 0; j < grid.Width; j++)
+                {
+                    grid.SetState(i, j, tmpStates[i][j]);
                 }
             }
         }
