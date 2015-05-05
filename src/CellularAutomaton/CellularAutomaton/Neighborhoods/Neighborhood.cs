@@ -28,6 +28,21 @@ namespace CellularAutomaton.Neighborhoods
             this.neighbors = neighbors;
         }
 
-        abstract public int NeighborCount(int state);
+        public int NeighborCount(int state)
+        {
+            int count = 0;
+            for (int i = 0; i < neighbors.Count(); i++)
+            {
+                if (neighbors[i] == state)
+                    count++;
+            }
+            return count;
+        }
+
+        public override bool Equals(object obj)
+        {
+            Neighborhood nb = obj as Neighborhood;
+            return (neighbors.SequenceEqual(nb.neighbors) && LocalCell == nb.LocalCell);
+        }
     }
 }

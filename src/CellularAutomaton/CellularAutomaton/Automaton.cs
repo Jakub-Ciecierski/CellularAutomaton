@@ -2,6 +2,7 @@
 using CellularAutomaton.Neighborhoods;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,28 @@ namespace CellularAutomaton
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
         /******************************************************************/
 
+        private Color aliveColor = Color.FromArgb(255, 255, 255);
+
+        public Color AliveColor
+        {
+            get { return aliveColor; }
+            private set { aliveColor = value; }
+        }
+
+        private Color deadColor = Color.FromArgb(0, 0, 0);
+
+        public Color DeadColor
+        {
+            get { return deadColor; }
+            private set { deadColor = value; }
+        }
+        
+
+
         /// <summary>
         ///     The grid of cells
         /// </summary>
-        private Grid grid;
+        private CellularGrid grid;
 
         /// <summary>
         ///     Current rule of the automaton
@@ -42,7 +61,7 @@ namespace CellularAutomaton
         /// <summary>
         ///     The constructor
         /// </summary>
-        public Automaton(Grid grid)
+        public Automaton(CellularGrid grid)
         {
             this.grid = grid;
         }

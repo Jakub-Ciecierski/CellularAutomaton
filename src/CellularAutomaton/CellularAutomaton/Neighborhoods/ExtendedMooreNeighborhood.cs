@@ -13,9 +13,5 @@ namespace CellularAutomaton.Neighborhoods
         {
         }
 
-        public override int NeighborCount(int state)
-        {
-            return state;
-        }
     }
 }

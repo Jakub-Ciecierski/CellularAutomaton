@@ -17,10 +17,10 @@ namespace CellularAutomatonConsole
 
         static void Main(string[] args)
         {
-            CellularAutomaton.Grid grid = createGrid();
+            CellularAutomaton.CellularGrid grid = createGrid();
 
             Automaton automaton = new Automaton(grid);
-            automaton.CurrentRule = createRule();
+            automaton.CurrentRule = convwaysGameOfLife();
 
             run(automaton);
         }
@@ -28,6 +28,8 @@ namespace CellularAutomatonConsole
         static private void run(Automaton automaton)
         {
             automaton.Show();
+            Console.Read();
+            //Thread.Sleep(500);
             Console.Clear();
 
             while (true)
@@ -35,29 +37,35 @@ namespace CellularAutomatonConsole
                 automaton.NextGeneration();
                 automaton.Show();
 
-                Thread.Sleep(500);
+                Console.Read();
+                //Thread.Sleep(5000);
                 Console.Clear();
             }
         }
 
-        static private CellularAutomaton.Grid createGrid()
+        static private CellularAutomaton.CellularGrid createGrid()
         {
-            CellularAutomaton.Grid grid = new CellularAutomaton.Grid(10, 15, 0);
-            grid.SetState(5, 3, 1);
-            grid.SetState(5, 4, 1);
-            grid.SetState(6, 3, 1);
+            CellularAutomaton.CellularGrid grid = new CellularAutomaton.CellularGrid(10, 15, 0);
+            
+            grid.SetState(5, 5, 1);
+            grid.SetState(5, 6, 1);
+            grid.SetState(5, 7, 1);
+            grid.SetState(5, 8, 1);
+            grid.SetState(5, 9, 1);
+            grid.SetState(4, 9, 1);
+
             return grid;
         }
 
         static private Rule createRule()
         {
-            Rule rule = new Rule(NeighborhoodTypes.Neumann);
+            Rule rule = new Rule(NeighborhoodTypes.Moore);
 
             // Any live cell with fewer than two live neighbours dies, as if caused by under-population.
             Transition transition1 = new Transition(DEAD, x => 
-                        { 
-                            return (x.NeighborCount(LIVE) == 2 && x.LocalCell==LIVE); 
-                        });
+            { 
+                return (x.NeighborCount(LIVE) == 2 && x.LocalCell == LIVE); 
+            });
 
             // Any live cell with more than three live neighbours dies, as if by overcrowding.
             Transition transition2 = new Transition(LIVE, x =>
@@ -73,7 +81,7 @@ namespace CellularAutomatonConsole
 
         static Rule convwaysGameOfLife()
         {
-            Rule rule = new Rule(NeighborhoodTypes.Neumann);
+            Rule rule = new Rule(NeighborhoodTypes.Moore);
 
             // Any live cell with fewer than two live neighbours dies, as if caused by under-population.
             Transition transition1 = new Transition(DEAD, x =>
@@ -81,23 +89,25 @@ namespace CellularAutomatonConsole
                 return (x.NeighborCount(LIVE) < 2 && x.LocalCell == LIVE);
             });
 
+            // Any live cell with two or three live neighbours lives on to the next generation.
+            Transition transition2 = new Transition(LIVE, x =>
+            {
+                return ((x.NeighborCount(LIVE) == 2 || x.NeighborCount(LIVE) == 3) && x.LocalCell == LIVE);
+            });
+
             // Any live cell with more than three live neighbours dies, as if by overcrowding.
-            Transition transition2 = new Transition(DEAD, x =>
+            Transition transition3 = new Transition(DEAD, x =>
             {
                 return (x.NeighborCount(LIVE) > 3 && x.LocalCell == LIVE);
             });
 
             // Any live cell with more than three live neighbours dies, as if by overcrowding.
-            Transition transition3 = new Transition(LIVE, x =>
+            Transition transition4 = new Transition(LIVE, x =>
             {
                 return (x.NeighborCount(LIVE) == 3 && x.LocalCell == DEAD);
             });
 
-            // Any live cell with two or three live neighbours lives on to the next generation.
-            Transition transition4 = new Transition(LIVE, x =>
-            {
-                return ((x.NeighborCount(LIVE) == 2 || x.NeighborCount(LIVE) == 3) && x.LocalCell == LIVE);
-            });
+            
 
             rule.AddTransition(transition1);
             rule.AddTransition(transition2);

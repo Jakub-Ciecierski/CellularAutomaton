@@ -8,6 +8,8 @@ namespace CellularAutomaton.Neighborhoods
 {
     /// <summary>
     ///     Represents a 4-point neighborhood
+    ///     
+    ///     neighbors[] = {N,E,S,W}
     /// </summary>
     public class NeumannNeighborhood : Neighborhood
     {
@@ -22,13 +24,5 @@ namespace CellularAutomaton.Neighborhoods
         {
         }
 
-        public override int NeighborCount(int state)
-        {
-            int count = 0;
-            for (int i = 0; i < NEIGHBOR_COUNT; i++)
-                if (neighbors[i] == state)
-                    count++;
-            return count;
-        }
     }
 }

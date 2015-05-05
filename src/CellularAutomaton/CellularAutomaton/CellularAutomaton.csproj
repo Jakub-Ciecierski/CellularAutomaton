@@ -32,6 +32,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -42,7 +44,7 @@
     <Compile Include="Automaton.cs" />
     <Compile Include="Generation\Rule.cs" />
     <Compile Include="Generation\Transition.cs" />
-    <Compile Include="Grid.cs" />
+    <Compile Include="CellularGrid.cs" />
     <Compile Include="Neighborhoods\ExtendedMooreNeighborhood.cs" />
     <Compile Include="Neighborhoods\MooreNeighborhood.cs" />
     <Compile Include="Neighborhoods\Neighborhood.cs" />

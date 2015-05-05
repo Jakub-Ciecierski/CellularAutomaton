@@ -10,7 +10,7 @@ namespace CellularAutomaton
     /// <summary>
     ///     Grid of cells used in automaton
     /// </summary>
-    public class Grid
+    public class CellularGrid
     {
         /******************************************************************/
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
@@ -64,7 +64,7 @@ namespace CellularAutomaton
         /// <summary>
         ///     Creates an empty grid
         /// </summary>
-        public Grid()
+        public CellularGrid()
         {
 
         }
@@ -78,7 +78,7 @@ namespace CellularAutomaton
         /// <param name="height">
         ///     Height of the grid
         /// </param>
-        public Grid(int height, int width)
+        public CellularGrid(int height, int width)
         {
             Height = height;
             Width = width;
@@ -100,10 +100,12 @@ namespace CellularAutomaton
         ///     The state which all the cells in the grid
         ///     should be initialized with
         /// </param>
-        public Grid(int height, int width, int initState)
+        public CellularGrid(int height, int width, int initState)
         {
             Height = height;
             Width = width;
+
+            Wrapping = true;
 
             initGrid(initState);
         }
@@ -160,12 +162,39 @@ namespace CellularAutomaton
 
         private MooreNeighborhood getMooreNeighborhood(int i, int j)
         {
-            throw new NotImplementedException("Neighborhood not implemented");
+            int localCell = GetState(i, j);
+            int ni = 0;
+            int[] neighbors = new int[8];
+
+            for (int k = -1; k <= 1; k++)
+            {
+                for (int l = -1; l <= 1; l++)
+                {
+                    if(!(k ==0 && l == 0))
+                        neighbors[ni++] = GetState(i + k, j + l);
+                }
+            }
+
+            return new MooreNeighborhood(localCell, neighbors);
+
         }
 
         private ExtendedMooreNeighborhood getExtendedMooreNeighborhood(int i, int j)
         {
-            throw new NotImplementedException("Neighborhood not implemented");
+            int localCell = GetState(i, j);
+            int ni = 0;
+            int[] neighbors = new int[24];
+
+            for (int k = -2; k <= 2; k++)
+            {
+                for (int l = -2; l <= 2; l++)
+                {
+                    if (!(k == 0 && l == 0))
+                        neighbors[ni++] = GetState(i + k, j + l);
+                }
+            }
+
+            return new ExtendedMooreNeighborhood(localCell, neighbors);
         }
 
         /*******************************************************************/
@@ -195,8 +224,21 @@ namespace CellularAutomaton
 
         public int GetState(int i, int j)
         {
-            List<int> row = gridMatrix.ElementAt(i);
-            return row[j];
+            int wrapI = i;
+            int wrapJ = j;
+            
+            // If wrapping is enabled, take indecies from opposite edges
+            if (Wrapping)
+            {
+                wrapI = (wrapI < 0) ? Height + wrapI : wrapI;
+                wrapI = (wrapI > Height - 1) ? wrapI - Height : wrapI;
+
+                wrapJ = (wrapJ < 0) ? Width + wrapJ : wrapJ;
+                wrapJ = (wrapJ > Width - 1) ? wrapJ - Width : wrapJ;
+            }
+
+            List<int> row = gridMatrix.ElementAt(wrapI);
+            return row[wrapJ];
         }
 
         /// <summary>

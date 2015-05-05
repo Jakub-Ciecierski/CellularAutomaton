@@ -113,6 +113,7 @@ namespace CellularAutomaton.Generation
                 if((newState=transition.Apply(nb)) >= 0)
                     return newState;
             }
+            // TODO placeholder 
             return nb.LocalCell;
             // return defaultTransition.Apply(nb);
         }
