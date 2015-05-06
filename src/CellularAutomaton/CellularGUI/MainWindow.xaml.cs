@@ -1,6 +1,7 @@
 ﻿using CellularAutomaton;
 using CellularAutomaton.Generation;
 using CellularAutomaton.Neighborhoods;
+using CellularAutomaton.Settings;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -17,6 +18,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace CellularGUI
 {
@@ -25,204 +27,251 @@ namespace CellularGUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        System.Drawing.Color nestColor = System.Drawing.Color.FromArgb(200, 20, 20);
-
         /// <summary>
         ///     Checks if mouse is being draged
         /// </summary>
-        bool isDragAlive = false;
-        bool isDragDead = false;
+        bool isLeftDrag = false;
+        bool isRightDrag = false;
 
-        const int cellWidth = 5;
-        const int cellHeight = 5;
+        bool isMiddleDrag = false;
+        const double middleDragFactor = 0.5;
+        System.Windows.Point middleDragStartPoint;
 
-        int gridWidth = 500;
-        int gridHeight = 500;
+        int gridWidth = 150;
+        int gridHeight = 150;
 
         CellularGrid cellularGrid;
         Automaton automaton;
 
-        WriteableBitmap wBitmap;
+        AutomatonBitmap automatonBitmap;
+
+        private int speed;
+
+        AutomatonDispatcher automatonTimer;
+
+        private const double zoomFactor = 0.1;
+        private double zoomValue = 1.0;
+
+        bool isMaximized = false;
+        private Rect _restoreLocation;
 
         public MainWindow()
         {
             InitializeComponent();
-            initGrid();
-            initBitmap();
+
+            windowsSettings();
+            
+            initAutomaton();
         }
 
-        private void initGrid()
+        private void windowsSettings()
         {
-            // Make space for each cell - which is of size (cellWidth x cellHeigh),
-            // and for the nest
-            int bitmapWidth = gridWidth * cellWidth + gridWidth + 1;
-            int bitmapHeight = gridHeight * cellHeight + gridHeight + 1;
+            //this.ShowTitleBar = false;
+        }
 
-            wBitmap = new WriteableBitmap(bitmapWidth, bitmapHeight, 300, 300, PixelFormats.Rgb24, null);
-            automatonImage.Source = wBitmap;
-
-            cellularGrid = new CellularGrid(gridHeight,gridWidth);
+        private void initAutomaton()
+        {
+            cellularGrid = new CellularGrid(gridHeight, gridWidth);
             automaton = new Automaton(cellularGrid);
-        }
 
-        private unsafe void initBitmap()
-        {
-            int width = wBitmap.PixelWidth;
-            int height = wBitmap.PixelHeight;
-            int stride = wBitmap.BackBufferStride;
-            int bytesPerPixel = (wBitmap.Format.BitsPerPixel) / 8;
+            automatonBitmap = new AutomatonBitmap(automaton, automatonImage);
 
-            wBitmap.Lock();
-            byte* pImgData = (byte*)wBitmap.BackBuffer;
+            speed = 20;
+            automatonTimer = new AutomatonDispatcher(automaton, speed);
 
-            int cRowStart = 0;
-            int cColStart = 0;
-            for (int row = 0; row < height; row++)
-            {
-                cColStart = cRowStart;
-                for (int col = 0; col < width; col++)
-                {
-                    byte* bPixel = pImgData + cColStart;
-
-                    // draw the nest
-                    if ((col % (cellWidth + 1) == 0) || (row % (cellHeight + 1) == 0) || col == width - 1 || row == height - 1)
-                    {
-                        bPixel[0] = nestColor.R;
-                        bPixel[1] = nestColor.G;
-                        bPixel[2] = nestColor.B;
-                    }
-                    // draw the cell
-                    else
-                    {
-                        bPixel[0] = automaton.DeadColor.R;
-                        bPixel[1] = automaton.DeadColor.G;
-                        bPixel[2] = automaton.DeadColor.B;
-                    }
-                    cColStart += bytesPerPixel;
-                }
-                cRowStart += stride;
-            }
-            Int32Rect rect = new Int32Rect(0, 0, width, height);
-            wBitmap.AddDirtyRect(rect);
-            wBitmap.Unlock();
-        }
-
-        /// <summary>
-        ///     Fills a cell with given color
-        /// </summary>
-        /// <param name="cellRow"></param>
-        /// <param name="cellCol"></param>
-        /// <param name="c"></param>
-        private unsafe void fillCell(int cellRow, int cellCol, System.Drawing.Color c)
-        {
-            int startPixelI = ((cellRow * cellWidth) + cellRow + 1);
-            int startPixelJ = ((cellCol * cellHeight) + cellCol + 1);
-
-            // todo global states
-            int width = wBitmap.PixelWidth;
-            int height = wBitmap.PixelHeight;
-            int stride = wBitmap.BackBufferStride;
-            int bytesPerPixel = (wBitmap.Format.BitsPerPixel) / 8;
-
-            wBitmap.Lock();
-            byte* pImgData = (byte*)wBitmap.BackBuffer;
-
-            Int32Rect rect = new Int32Rect(startPixelJ, startPixelI, cellWidth, cellHeight);
-
-            byte* startPixel = pImgData + 
-                                (stride * (startPixelI + 1)) + 
-                                ((startPixelJ + 1) * (bytesPerPixel));
-
-            for (int x = 0; x < cellWidth; x++)
-            {
-                for (int y = 0; y < cellHeight; y++)
-                {
-                    startPixel = pImgData +
-                                (stride * (startPixelI + x)) +
-                                (bytesPerPixel * (startPixelJ + y));
-
-                    startPixel[0] = c.R;
-                    startPixel[1] = c.G;
-                    startPixel[2] = c.B;
-                }
-            }
-
-            wBitmap.AddDirtyRect(rect);
-            wBitmap.Unlock();
-        }
-
-        /// <summary>
-        ///     Takes point from the image
-        ///     Scales it to proper index for bitmap
-        ///     and fills a proper cell with given color
-        /// </summary>
-        /// <param name="point"></param>
-        /// <param name="c"></param>
-        private void fillCellByImagePoint(System.Windows.Point point, System.Drawing.Color c)
-        {
-            int width = wBitmap.PixelWidth;
-            int height = wBitmap.PixelHeight;
-
-            double actualWidth = automatonImage.ActualWidth;
-            double actualHeight = automatonImage.ActualHeight;
-
-            double scaleWidth = actualWidth / width;
-            double scaleHeight = actualHeight / height;
-
-            // scalled indecies image
-            int pixelI = (int)(point.X / scaleWidth);
-            int pixelJ = (int)(point.Y / scaleHeight);
-
-            // pixel indecies
-            int cellI = (pixelI - 1) / (cellWidth + 1);
-            int cellJ = (pixelJ - 1) / (cellHeight + 1);
-
-            // which cell
-            fillCell(cellJ, cellI, c);
+            automaton.CurrentRule = convwaysGameOfLife();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
 
         }
-        /******************** Drag and Draw feature *************************/
+
+        /*******************************************************************/
+        /************************* DRAG AND DRAW ***************************/
+        /*******************************************************************/
         private void automatonImage_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            isDragAlive = true;
+            isLeftDrag = true;
         }
 
         private void automatonImage_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            isDragAlive = false;
+            isLeftDrag = false;
             System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
-            fillCellByImagePoint(point, automaton.AliveColor);
+            automatonBitmap.FillCellByImagePoint(point, 1);
         }
 
-        private void automatonImage_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isDragAlive)
-            {
-                System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
-                fillCellByImagePoint(point, automaton.AliveColor);
-            }
-            if (isDragDead)
-            {
-                System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
-                fillCellByImagePoint(point, automaton.DeadColor);
-            }
-        }
         private void automatonImage_MouseRightButtonDown(object sender, MouseButtonEventArgs e)
         {
-            isDragDead = true;
+            isRightDrag = true;
         }
 
         private void automatonImage_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
         {
-            isDragDead = false;
+            isRightDrag = false;
             System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
-            fillCellByImagePoint(point, automaton.DeadColor);
+            automatonBitmap.FillCellByImagePoint(point, 0);
         }
 
-        /******************** END Drag and Draw feature *************************/
+        private void automatonImage_MouseMove(object sender, MouseEventArgs e)
+        {
+            System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
+            // Draw alive cell
+            if (isLeftDrag)
+            {
+                automatonBitmap.FillCellByImagePoint(point, 1);
+            }
+            // Draw dead cell
+            else if (isRightDrag)
+            {
+                automatonBitmap.FillCellByImagePoint(point, 0);
+            }
+            // Move scrollviewer
+            else if (isMiddleDrag)
+            {
+                double deltaX;
+                double deltaY;
+
+                deltaX = middleDragStartPoint.X - point.X;
+                deltaY = middleDragStartPoint.Y - point.Y;
+
+                gridScollViewer.ScrollToHorizontalOffset(gridScollViewer.HorizontalOffset + deltaX * middleDragFactor);
+                gridScollViewer.ScrollToVerticalOffset(gridScollViewer.VerticalOffset + deltaY * middleDragFactor);
+            }
+        }
+
+
+        /*******************************************************************/
+        /************************* MIDDLE MOUSE ****************************/
+        /*******************************************************************/
+
+        private void automatonImage_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Middle)
+            {
+                isMiddleDrag = true;
+                middleDragStartPoint = e.GetPosition(e.Source as FrameworkElement);
+            }
+        }
+
+        private void automatonImage_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Middle)
+            {
+                isMiddleDrag = false;
+            }
+        }
+
+        private void image_MouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            double lastZoomValue = zoomValue;
+            if (e.Delta > 0)
+            {
+                zoomValue += zoomFactor;
+            }
+            else
+            {
+                zoomValue -= zoomFactor;
+            }
+
+            if(!automatonBitmap.ScaleImage(zoomValue))
+                zoomValue = lastZoomValue;
+        }
+
+
+        /*******************************************************************/
+        /**************************** BUTTONS ******************************/
+        /*******************************************************************/
+
+        private void generationButton_Click(object sender, RoutedEventArgs e)
+        {
+            automatonTimer.Start();
+        }
+
+        private void stopGenerationButton_Click(object sender, RoutedEventArgs e)
+        {
+            automatonTimer.Stop();
+        }
+
+        /*******************************************************************/
+        /**************************** COMMON *******************************/
+        /*******************************************************************/
+
+        private Rule convwaysGameOfLife()
+        {
+            Rule rule = new Rule(NeighborhoodTypes.Moore);
+
+            // Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+            Transition transition1 = new Transition(CellStates.DEAD, x =>
+            {
+                return (x.NeighborCount(CellStates.ALIVE) < 2 && x.LocalCell == CellStates.ALIVE);
+            });
+
+            // Any live cell with two or three live neighbours lives on to the next generation.
+            Transition transition2 = new Transition(CellStates.ALIVE, x =>
+            {
+                return ((x.NeighborCount(CellStates.ALIVE) == 2 || x.NeighborCount(CellStates.ALIVE) == 3) && x.LocalCell == CellStates.ALIVE);
+            });
+
+            // Any live cell with more than three live neighbours dies, as if by overcrowding.
+            Transition transition3 = new Transition(CellStates.DEAD, x =>
+            {
+                return (x.NeighborCount(CellStates.ALIVE) > 3 && x.LocalCell == CellStates.ALIVE);
+            });
+
+            // Any live cell with more than three live neighbours dies, as if by overcrowding.
+            Transition transition4 = new Transition(CellStates.ALIVE, x =>
+            {
+                return (x.NeighborCount(CellStates.ALIVE) == 3 && x.LocalCell == CellStates.DEAD);
+            });
+
+            rule.AddTransition(transition1);
+            rule.AddTransition(transition2);
+            rule.AddTransition(transition3);
+            rule.AddTransition(transition4);
+
+            return rule;
+        }
+
+        private void Grid_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 2)
+            {
+                if (!isMaximized)
+                    MaximizeWindow();
+                else
+                    Restore();
+            }
+            else
+            {
+                DragMove();
+            }
+        }
+
+        private void MaximizeWindow()
+        {
+            isMaximized = true;
+            _restoreLocation = new Rect { Width = Width, Height = Height, X = Left, Y = Top };
+
+            System.Windows.Forms.Screen currentScreen;
+            currentScreen = System.Windows.Forms.Screen.FromPoint(System.Windows.Forms.Cursor.Position);
+
+            Height = currentScreen.WorkingArea.Height + 3;
+            Width = currentScreen.WorkingArea.Width + 3;
+
+            Left = currentScreen.WorkingArea.X - 2;
+            Top = currentScreen.WorkingArea.Y - 2;
+        }
+
+        private void Restore()
+        {
+            isMaximized = false;
+            Height = _restoreLocation.Height;
+            Width = _restoreLocation.Width;
+            Left = _restoreLocation.X;
+            Top = _restoreLocation.Y;
+        }
+
     }
 }

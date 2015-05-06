@@ -20,28 +20,17 @@ namespace CellularAutomaton
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
         /******************************************************************/
 
-        private Color aliveColor = Color.FromArgb(255, 255, 255);
-
-        public Color AliveColor
-        {
-            get { return aliveColor; }
-            private set { aliveColor = value; }
-        }
-
-        private Color deadColor = Color.FromArgb(0, 0, 0);
-
-        public Color DeadColor
-        {
-            get { return deadColor; }
-            private set { deadColor = value; }
-        }
-        
-
-
         /// <summary>
         ///     The grid of cells
         /// </summary>
         private CellularGrid grid;
+
+        public CellularGrid Grid
+        {
+            get { return grid; }
+            private set { grid = value; }
+        }
+        
 
         /// <summary>
         ///     Current rule of the automaton
@@ -80,31 +69,58 @@ namespace CellularAutomaton
         /// </summary>
         public void NextGeneration()
         {
+            //ConsoleManager.CaptureTime();
+
+            // check if given cell should be redrawn
+            int[][] flags = new int[grid.Height][];
+
             // prepapre tmp state array
             int[][] tmpStates = new int[grid.Height][];
             for (int i = 0; i < grid.Height; i++)
             {
                 tmpStates[i] = new int[grid.Width];
+                flags[i] = new int[grid.Width];
             }
+
+            //ConsoleManager.PrintElapsedTime("ARRAY INIT");
+            //ConsoleManager.CaptureTime();
+
+            long nbTime = 0;
+            long applyTime = 0;
 
             // Compute new state
             for (int i = 0; i < grid.Height; i++)
             {
                 for (int j = 0; j < grid.Width; j++)
                 {
+                    //ConsoleManager.CaptureTime();
                     Neighborhood nb = grid.GetNeighborhood(i, j, CurrentRule.NeighborhoodType);
+                    //nbTime += ConsoleManager.GetElapsedTime();
+
+                    //ConsoleManager.CaptureTime();
                     tmpStates[i][j] = CurrentRule.Apply(nb);
+                    //applyTime += ConsoleManager.GetElapsedTime();
+
+                    if (tmpStates[i][j] != grid.GetState(i, j))
+                        flags[i][j] = 1;
                 }
             }
+
+            //ConsoleManager.PrintElapsedTime("APPLY RULES" + "\n Time GetNeighborhood: " + nbTime + " Time Apply rule: " + applyTime);
+            //ConsoleManager.CaptureTime();
 
             // replace new states
             for (int i = 0; i < grid.Height; i++)
             {
                 for (int j = 0; j < grid.Width; j++)
                 {
-                    grid.SetState(i, j, tmpStates[i][j]);
+                    if(flags[i][j] == 1)
+                        grid.SetState(i, j, tmpStates[i][j]);
                 }
             }
+
+            //ConsoleManager.PrintElapsedTime("DRAWING");
+            //ConsoleManager.CaptureTime();
         }
 
         public void Show()

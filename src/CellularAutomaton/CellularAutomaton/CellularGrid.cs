@@ -57,6 +57,17 @@ namespace CellularAutomaton
             set { wrapping = value; }
         }
 
+        /// <summary>
+        ///     Pointer to drawing function
+        /// </summary>
+        private Action<int, int, int> drawCell;
+
+        public Action<int, int, int> DrawCell
+        {
+            get { return drawCell; }
+            set { drawCell = value; }
+        }
+
         /******************************************************************/
         /************************** CONSTRUCTORS **************************/
         /******************************************************************/
@@ -66,7 +77,7 @@ namespace CellularAutomaton
         /// </summary>
         public CellularGrid()
         {
-
+            Wrapping = true;
         }
 
         /// <summary>
@@ -82,6 +93,8 @@ namespace CellularAutomaton
         {
             Height = height;
             Width = width;
+
+            Wrapping = true;
 
             initGrid(0);
         }
@@ -237,7 +250,11 @@ namespace CellularAutomaton
                 wrapJ = (wrapJ > Width - 1) ? wrapJ - Width : wrapJ;
             }
 
-            List<int> row = gridMatrix.ElementAt(wrapI);
+            List<int> row;
+            lock (gridMatrix)
+            {
+                row = gridMatrix.ElementAt(wrapI);
+            }
             return row[wrapJ];
         }
 
@@ -249,8 +266,13 @@ namespace CellularAutomaton
         /// <param name="state"></param>
         public void SetState(int i, int j, int state)
         {
-            List<int> row = gridMatrix.ElementAt(i);
-            row[j] = state;
+            lock (gridMatrix)
+            {
+                List<int> row = gridMatrix.ElementAt(i);
+                row[j] = state;
+            }
+            if(DrawCell != null)
+                DrawCell(i, j, state);
         }
 
         /// <summary>

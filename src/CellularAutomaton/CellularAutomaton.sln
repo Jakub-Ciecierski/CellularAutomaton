@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCellular", "TestCellula
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CellularGUI", "CellularGUI\CellularGUI.csproj", "{BEF40E86-1A12-46FC-B0DD-749FA9250456}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CellularAutomatonConsole", "CellularAutomatonConsole\CellularAutomatonConsole.csproj", "{EE59AAA9-CCFB-48A5-AB5F-2848C46B9FA8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{BEF40E86-1A12-46FC-B0DD-749FA9250456}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BEF40E86-1A12-46FC-B0DD-749FA9250456}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BEF40E86-1A12-46FC-B0DD-749FA9250456}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EE59AAA9-CCFB-48A5-AB5F-2848C46B9FA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EE59AAA9-CCFB-48A5-AB5F-2848C46B9FA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EE59AAA9-CCFB-48A5-AB5F-2848C46B9FA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EE59AAA9-CCFB-48A5-AB5F-2848C46B9FA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
