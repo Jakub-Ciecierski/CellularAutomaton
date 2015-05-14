@@ -10,5 +10,13 @@ namespace CellularAutomaton.Settings
     {
         public const int DEAD = 0;
         public const int ALIVE = 1;
+
+        public static int GetOpositeState(int state)
+        {
+            if (state == DEAD)
+                return ALIVE;
+            else
+                return DEAD;
+        }
     }
 }

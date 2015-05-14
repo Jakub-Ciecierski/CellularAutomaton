@@ -19,7 +19,7 @@ namespace TestCellular
             grid.SetState(9, 1, 1);
             grid.Show();
 
-            MooreNeighborhood actualNb = (MooreNeighborhood)grid.GetNeighborhood(0, 0, NeighborhoodTypes.Moore);
+            MooreNeighborhood actualNb = (MooreNeighborhood)grid.GetNeighborhood(0, 0, NeighborhoodType.Moore);
 
             int[] neightboors = {1,1,1,1,0,1,0,0};
             MooreNeighborhood expectedNb = new MooreNeighborhood(0, neightboors);
@@ -40,7 +40,7 @@ namespace TestCellular
             grid.SetState(9, 1, 1);
             grid.Show();
 
-            ExtendedMooreNeighborhood actualNb = (ExtendedMooreNeighborhood)grid.GetNeighborhood(0, 0, NeighborhoodTypes.ExtendedMoore);
+            ExtendedMooreNeighborhood actualNb = (ExtendedMooreNeighborhood)grid.GetNeighborhood(0, 0, NeighborhoodType.ExtendedMoore);
 
             int[] neightboors = {   1, 0, 0, 1, 0, 
                                     0, 1, 1, 1, 0, 

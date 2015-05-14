@@ -67,8 +67,8 @@ namespace CellularGUI
         double originalImageWidth;
         double originalImageHeight;
 
-        const double MAX_ZOOM_SCALE = 4.0;
-        const double MIN_ZOOM_SCALE = 4.0;
+        const double MAX_ZOOM_SCALE = 10.0;
+        const double MIN_ZOOM_SCALE = 10.0;
 
         /******************************************************************/
         /************************** CONSTRUCTORS **************************/
@@ -168,6 +168,34 @@ namespace CellularGUI
             wBitmap.Unlock();
         }
 
+        private unsafe void putPixel(int i, int j, System.Drawing.Color c)
+        {
+            wBitmap.Lock();
+            byte* pImgData = (byte*)wBitmap.BackBuffer;
+
+            Int32Rect rect = new Int32Rect(j, i, 1, 1);
+
+            byte* pixel = pImgData +
+                                (stride * i) +
+                                ((j * bytesPerPixel));
+
+            try
+            {
+                // color the bitmap
+                pixel[0] = c.R;
+                pixel[1] = c.G;
+                pixel[2] = c.B;
+            }
+            catch (AccessViolationException e) { Console.Write(e.StackTrace); }
+
+            try
+            {
+                wBitmap.AddDirtyRect(rect);
+            }
+            catch (ArgumentException e) { Console.Write(e.StackTrace); }
+            wBitmap.Unlock();
+        }
+
         /*******************************************************************/
         /************************* PUBLIC METHODS **************************/
         /*******************************************************************/
@@ -184,11 +212,7 @@ namespace CellularGUI
             int startPixelJ = ((cellCol * CELL_HEIGHT) + cellCol + 1);
 
             // todo global states
-            int width = wBitmap.PixelWidth;
-            int height = wBitmap.PixelHeight;
-            int stride = wBitmap.BackBufferStride;
-            int bytesPerPixel = (wBitmap.Format.BitsPerPixel) / 8;
-
+            
             wBitmap.Lock();
             byte* pImgData = (byte*)wBitmap.BackBuffer;
 
@@ -197,31 +221,39 @@ namespace CellularGUI
             byte* startPixel = pImgData +
                                 (stride * (startPixelI + 1)) +
                                 ((startPixelJ + 1) * (bytesPerPixel));
-
+            
+            System.Drawing.Color c = GridSettings.GetStateColor(state);
             for (int x = 0; x < CELL_WIDTH; x++)
             {
                 for (int y = 0; y < CELL_HEIGHT; y++)
                 {
+                    
                     startPixel = pImgData +
                                 (stride * (startPixelI + x)) +
                                 (bytesPerPixel * (startPixelJ + y));
+                     
                     try
                     {
+                        // put pixel is too slow
+                        //putPixel(startPixelI + x, startPixelJ + y, c);
+                        
                         // color the bitmap
-                        System.Drawing.Color c = GridSettings.GetStateColor(state);
                         startPixel[0] = c.R;
                         startPixel[1] = c.G;
                         startPixel[2] = c.B;
+                         
                     }
                     catch (AccessViolationException e) { Console.Write(e.StackTrace); }
                 }
             }
+            
             try
             {
                 wBitmap.AddDirtyRect(rect);
             }
             catch (ArgumentException e) { Console.Write(e.StackTrace); }
             wBitmap.Unlock();
+             
         }
 
         /// <summary>

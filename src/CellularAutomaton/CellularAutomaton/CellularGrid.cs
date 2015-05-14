@@ -223,13 +223,13 @@ namespace CellularAutomaton
         /// <returns>
         ///     Neighborhood of a given cell
         /// </returns>
-        public Neighborhood GetNeighborhood(int i, int j, NeighborhoodTypes nbType)
+        public Neighborhood GetNeighborhood(int i, int j, NeighborhoodType nbType)
         {
-            if (nbType == NeighborhoodTypes.Neumann)
+            if (nbType == NeighborhoodType.Neumann)
                 return getNeumannNeighborhood(i, j);
-            else if (nbType == NeighborhoodTypes.Moore)
+            else if (nbType == NeighborhoodType.Moore)
                 return getMooreNeighborhood(i, j);
-            else if (nbType == NeighborhoodTypes.ExtendedMoore)
+            else if (nbType == NeighborhoodType.ExtendedMoore)
                 return getExtendedMooreNeighborhood(i, j);
             else
                 throw new NotImplementedException("Neighborhood not implemented");
@@ -251,10 +251,10 @@ namespace CellularAutomaton
             }
 
             List<int> row;
-            lock (gridMatrix)
-            {
+            //lock (gridMatrix)
+            //{
                 row = gridMatrix.ElementAt(wrapI);
-            }
+            //}
             return row[wrapJ];
         }
 

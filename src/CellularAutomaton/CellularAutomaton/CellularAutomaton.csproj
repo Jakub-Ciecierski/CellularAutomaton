@@ -43,13 +43,16 @@
   <ItemGroup>
     <Compile Include="Automaton.cs" />
     <Compile Include="ConsoleManager.cs" />
+    <Compile Include="Generation\DetailedTransition.cs" />
     <Compile Include="Generation\Rule.cs" />
+    <Compile Include="Generation\RuleType.cs" />
+    <Compile Include="Generation\SimpleTransition.cs" />
     <Compile Include="Generation\Transition.cs" />
     <Compile Include="CellularGrid.cs" />
     <Compile Include="Neighborhoods\ExtendedMooreNeighborhood.cs" />
     <Compile Include="Neighborhoods\MooreNeighborhood.cs" />
     <Compile Include="Neighborhoods\Neighborhood.cs" />
-    <Compile Include="Neighborhoods\NeighborhoodTypes.cs" />
+    <Compile Include="Neighborhoods\NeighborhoodType.cs" />
     <Compile Include="Neighborhoods\NeumannNeighborhood.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\GridSettings.cs" />

@@ -2,6 +2,7 @@
 using CellularAutomaton.Generation;
 using CellularAutomaton.Neighborhoods;
 using CellularAutomaton.Settings;
+using CellularGUI.RuleManager;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -37,15 +38,15 @@ namespace CellularGUI
         const double middleDragFactor = 0.5;
         System.Windows.Point middleDragStartPoint;
 
-        int gridWidth = 150;
-        int gridHeight = 150;
+        int gridWidth = 100;
+        int gridHeight = 100;
 
         CellularGrid cellularGrid;
         Automaton automaton;
 
         AutomatonBitmap automatonBitmap;
 
-        private int speed;
+        private int speed = 20;
 
         AutomatonDispatcher automatonTimer;
 
@@ -55,9 +56,13 @@ namespace CellularGUI
         bool isMaximized = false;
         private Rect _restoreLocation;
 
+        private RuleEditorCycle ruleEditorCycle;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            ruleEditorCycle = new RuleEditorCycle(this.ruleEditorMainGrid);
 
             windowsSettings();
             
@@ -76,7 +81,6 @@ namespace CellularGUI
 
             automatonBitmap = new AutomatonBitmap(automaton, automatonImage);
 
-            speed = 20;
             automatonTimer = new AutomatonDispatcher(automaton, speed);
 
             automaton.CurrentRule = convwaysGameOfLife();
@@ -200,8 +204,34 @@ namespace CellularGUI
 
         private Rule convwaysGameOfLife()
         {
-            Rule rule = new Rule(NeighborhoodTypes.Moore);
+            Rule rule = new Rule(NeighborhoodType.Moore);
 
+            
+            int[] transitionMap1 = { CellStates.ALIVE, -1, 0 };
+            SimpleTransition transition1 = new SimpleTransition(transitionMap1, CellStates.DEAD);
+            int[] transitionMap2 = { CellStates.ALIVE, -1, 1 };
+            SimpleTransition transition2 = new SimpleTransition(transitionMap2, CellStates.DEAD);
+
+            int[] transitionMap3 = { CellStates.ALIVE, -1, 2 };
+            SimpleTransition transition3 = new SimpleTransition(transitionMap3, CellStates.ALIVE);
+            int[] transitionMap4 = { CellStates.ALIVE, -1, 3 };
+            SimpleTransition transition4 = new SimpleTransition(transitionMap4, CellStates.ALIVE);
+
+            int[] transitionMap5 = { CellStates.ALIVE, -1, 4 };
+            SimpleTransition transition5 = new SimpleTransition(transitionMap5, CellStates.DEAD);
+            int[] transitionMap6 = { CellStates.ALIVE, -1, 5 };
+            SimpleTransition transition6 = new SimpleTransition(transitionMap6, CellStates.DEAD);
+            int[] transitionMap7 = { CellStates.ALIVE, -1, 6 };
+            SimpleTransition transition7 = new SimpleTransition(transitionMap7, CellStates.DEAD);
+            int[] transitionMap8 = { CellStates.ALIVE, -1, 7 };
+            SimpleTransition transition8 = new SimpleTransition(transitionMap8, CellStates.DEAD);
+            int[] transitionMap9 = { CellStates.ALIVE, -1, 8 };
+            SimpleTransition transition9 = new SimpleTransition(transitionMap9, CellStates.DEAD);
+
+            int[] transitionMap10 = { CellStates.DEAD, -1, 3 };
+            SimpleTransition transition10 = new SimpleTransition(transitionMap10, CellStates.ALIVE);
+
+            /*
             // Any live cell with fewer than two live neighbours dies, as if caused by under-population.
             Transition transition1 = new Transition(CellStates.DEAD, x =>
             {
@@ -225,11 +255,28 @@ namespace CellularGUI
             {
                 return (x.NeighborCount(CellStates.ALIVE) == 3 && x.LocalCell == CellStates.DEAD);
             });
+             * */
+            /*
+            for (int i = 0; i < 100; i++)
+            {
+                Transition transition = new Transition(CellStates.ALIVE, x =>
+                {
+                    return (x.NeighborCount(CellStates.ALIVE) == 3 && x.LocalCell == CellStates.DEAD);
+                });
+                rule.AddTransition(transition);
+            }*/
 
             rule.AddTransition(transition1);
             rule.AddTransition(transition2);
             rule.AddTransition(transition3);
             rule.AddTransition(transition4);
+            rule.AddTransition(transition5);
+            rule.AddTransition(transition6);
+            rule.AddTransition(transition7);
+            rule.AddTransition(transition8);
+            rule.AddTransition(transition9);
+            rule.AddTransition(transition10);
+
 
             return rule;
         }
@@ -271,6 +318,27 @@ namespace CellularGUI
             Width = _restoreLocation.Width;
             Left = _restoreLocation.X;
             Top = _restoreLocation.Y;
+        }
+
+        private void stepGenerationButton_Click(object sender, RoutedEventArgs e)
+        {
+            automaton.NextGeneration();
+        }
+
+        /// <summary>
+        ///     Starts adding new rule
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void newRuleButton_Click(object sender, RoutedEventArgs e)
+        {
+            ruleEditorCycle.RunNeighborhoodChooser();
+        }
+
+        private void applyRuleButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ruleEditorCycle.RuleEditor != null)
+                automaton.CurrentRule = ruleEditorCycle.RuleEditor.CurrentRule;
         }
 
     }

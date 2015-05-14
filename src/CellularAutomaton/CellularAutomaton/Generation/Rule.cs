@@ -33,22 +33,46 @@ namespace CellularAutomaton.Generation
         ///     The type of the neighborhood which this rule is 
         ///     defined over.
         /// </summary>
-        private NeighborhoodTypes neighborhoodType;
+        private NeighborhoodType neighborhoodType;
 
-        public NeighborhoodTypes NeighborhoodType
+        public NeighborhoodType NeighborhoodType
         {
             get { return neighborhoodType; }
             private set { neighborhoodType = value; }
         }
 
+        /// <summary>
+        ///     Type of the rule, either detailed:
+        ///         choose position of each neighbor
+        ///     or simple:
+        ///         choose number of neighbors
+        /// </summary>
+        private RuleType ruleType;
+
+        public RuleType RuleType
+        {
+            get { return ruleType; }
+            set { ruleType = value; }
+        }
+
+
+        private string name;
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
+
         /******************************************************************/
         /************************** CONSTRUCTORS **************************/
         /******************************************************************/
 
-        public Rule(NeighborhoodTypes neighborhoodType)
+        public Rule(NeighborhoodType neighborhoodType)
         {
             NeighborhoodType = neighborhoodType;
-            defaultTransition = new Transition();
+            //defaultTransition = new Transition();
         }
 
         /// <summary>
@@ -58,7 +82,7 @@ namespace CellularAutomaton.Generation
         /// </summary>
         /// <param name="neighborhoodType"></param>
         /// <param name="defaultTransition"></param>
-        public Rule(NeighborhoodTypes neighborhoodType, Transition defaultTransition)
+        public Rule(NeighborhoodType neighborhoodType, Transition defaultTransition)
         {
             NeighborhoodType = neighborhoodType;
             this.defaultTransition = defaultTransition;
@@ -83,6 +107,16 @@ namespace CellularAutomaton.Generation
         public void AddTransition(Transition transition)
         {
             transitions.Add(transition);
+        }
+
+        public void AddTransitionAt(Transition transition, int i)
+        {
+            transitions.Insert(i, transition);
+        }
+
+        public void RemoveAt(int i)
+        {
+            transitions.RemoveAt(i);
         }
 
         /// <summary>

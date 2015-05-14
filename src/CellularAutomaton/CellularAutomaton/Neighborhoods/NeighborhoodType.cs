@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace CellularAutomaton.Neighborhoods
 {
-    public enum NeighborhoodTypes
+    public enum NeighborhoodType
     {
         Neumann,
         Moore,
-        ExtendedMoore
+        ExtendedMoore,
+        None
     }
 }
