@@ -15,6 +15,7 @@ namespace CellularGUI
     /// <summary>
     ///     Draw the automaton
     /// </summary>
+    [Serializable]
     public class AutomatonBitmap
     {
         /******************************************************************/
@@ -62,6 +63,7 @@ namespace CellularGUI
         /// <summary>
         ///     The actual automaton logic
         /// </summary>
+
         private Automaton automaton;
 
         double originalImageWidth;

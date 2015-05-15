@@ -11,6 +11,7 @@ namespace CellularAutomaton.Neighborhoods
     ///     
     ///     neighbors[] = {N,E,S,W}
     /// </summary>
+    [Serializable]
     public class NeumannNeighborhood : Neighborhood
     {
         /// <summary>

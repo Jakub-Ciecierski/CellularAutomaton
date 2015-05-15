@@ -18,6 +18,8 @@ namespace CellularGUI.RuleManager
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
         /******************************************************************/
 
+        private bool isFirst = true;
+
         private const int NEUMANN_WIDTH = 3;
         private const int NEUMANN_HEIGHT = 3;
 
@@ -72,7 +74,7 @@ namespace CellularGUI.RuleManager
         public WriteableBitmap Bitmap
         {
             get { return wBitmap; }
-            private set { wBitmap = value; }
+            set { wBitmap = value; }
         }
 
         private NeighborhoodType type;
@@ -105,27 +107,24 @@ namespace CellularGUI.RuleManager
             this.neighbors = neighbors;
             Type = type;
 
-            this.localCell = CellStates.GetOpositeState(this.localCell);
-            for (int i = 0; i < this.neighbors.Count(); i++)
-            {
-                this.neighbors[i] = CellStates.GetOpositeState(neighbors[i]);
-            }
+            init(1,1);
 
-            init(0,0);
+            isFirst = false;
         }
 
         public NeighborhoodBitmap(int width, int height)
         {
             Type = NeighborhoodType.None;
-            localCell = CellStates.ALIVE;
+            localCell = CellStates.DEAD;
 
             init(width, height);
+
+            isFirst = false;
         }
         
         public NeighborhoodBitmap(NeighborhoodType type)
         {
-            // init() will put states in the oposite value
-            localCell = CellStates.ALIVE;
+            localCell = CellStates.DEAD;
 
             Type = type;
             if (Type == NeighborhoodType.Neumann)
@@ -135,9 +134,11 @@ namespace CellularGUI.RuleManager
             if (Type == NeighborhoodType.ExtendedMoore)
                 neighbors = new int[24];
             for (int i = 0; i < neighbors.Count(); i++)
-                neighbors[i] = CellStates.ALIVE;
+                neighbors[i] = CellStates.DEAD;
 
             init(0,0);
+
+            isFirst = false;
         }
 
         /*******************************************************************/
@@ -241,24 +242,57 @@ namespace CellularGUI.RuleManager
             {
                 // North
                 if (cellRow == 0 && cellCol == 1)
-                    state = neighbors[0] = CellStates.GetOpositeState(neighbors[0]);
+                {
+                    if(isFirst)
+                        state = neighbors[0];
+                    else
+                        state = neighbors[0] = CellStates.GetOpositeState(neighbors[0]);
+                }
+                    
                 // East
                 if (cellRow == 1 && cellCol == 2)
-                    state = neighbors[1] = CellStates.GetOpositeState(neighbors[1]);
+                {
+                    if(isFirst)
+                        state = neighbors[1];
+                    else
+                        state = neighbors[1] = CellStates.GetOpositeState(neighbors[1]);
+                }
+                    
                 // South
                 if (cellRow == 2 && cellCol == 1)
-                    state = neighbors[2] = CellStates.GetOpositeState(neighbors[2]);
+                {
+                    if(isFirst)
+                        state = neighbors[2];
+                    else
+                        state = neighbors[2] = CellStates.GetOpositeState(neighbors[2]);
+                }
+                    
                 // West
                 if (cellRow == 1 && cellCol == 0)
-                    state = neighbors[3] = CellStates.GetOpositeState(neighbors[3]);
+                {
+                    if(isFirst)
+                        state = neighbors[3];
+                    else
+                        state = neighbors[3] = CellStates.GetOpositeState(neighbors[3]);
+                }
+
                 if (cellRow == 1 && cellCol == 1)
-                    state = localCell = CellStates.GetOpositeState(localCell);
+                {
+                    if (isFirst)
+                        state = localCell;
+                    else
+                        state = localCell = CellStates.GetOpositeState(localCell);
+                }
+                    
             }
             if (Type == NeighborhoodType.Moore)
             {
                 if (cellRow == 1 && cellCol == 1)
                 {
-                    state = localCell = CellStates.GetOpositeState(localCell);
+                    if (isFirst)
+                        state = localCell;
+                    else
+                        state = localCell = CellStates.GetOpositeState(localCell);
                 }
                     
                 else
@@ -266,25 +300,41 @@ namespace CellularGUI.RuleManager
                     int index = cellRow * MOORE_WIDTH + cellCol;
                     index = index > 4 ? index - 1 : index;
 
-                    state = neighbors[index] = CellStates.GetOpositeState(neighbors[index]);
+                    if (isFirst)
+                        state = neighbors[index];
+                    else
+                        state = neighbors[index] = CellStates.GetOpositeState(neighbors[index]);
                 }
                 
             }
             if (Type == NeighborhoodType.ExtendedMoore)
             {
                 if (cellRow == 2 && cellCol == 2)
-                    state = localCell = CellStates.GetOpositeState(localCell);
+                {
+                    if (isFirst)
+                        state = localCell;
+                    else
+                        state = localCell = CellStates.GetOpositeState(localCell);  
+                }
+                    
                 else
                 {
                     int index = cellRow * EXTENDED_MOORE_WIDTH + cellCol;
                     index = index > 12 ? index - 1 : index;
-                    state = neighbors[index] = CellStates.GetOpositeState(neighbors[index]);
+
+                    if (isFirst)
+                        state = neighbors[index];
+                    else
+                        state = neighbors[index] = CellStates.GetOpositeState(neighbors[index]);
                 }
                 
             }
             if (Type == NeighborhoodType.None)
             {
-                state = localCell = CellStates.GetOpositeState(localCell);
+                if (isFirst)
+                    state = localCell;
+                else
+                    state = localCell = CellStates.GetOpositeState(localCell);
             }
             return state;
         }

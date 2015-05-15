@@ -4,12 +4,16 @@ using CellularAutomaton.Neighborhoods;
 using CellularAutomaton.Settings;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace CellularGUI.RuleManager
@@ -19,6 +23,8 @@ namespace CellularGUI.RuleManager
         /******************************************************************/
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
         /******************************************************************/
+
+        private const string FILE_EXTENTION = ".rl";
 
         private const double NEIGHBORHOOD_SIZE_SCALLAR = 3.0;
         private const double NEWSTATE_SIZE_SCALLAR = 1.0;
@@ -34,6 +40,11 @@ namespace CellularGUI.RuleManager
         private TextBox nameTextBox;
 
         private Button newTransitionButton;
+
+        private int lastItemSelected = -1;
+
+        private List<NeighborhoodBitmap> neighborhoodBitmaps = new List<NeighborhoodBitmap>();
+        private List<NeighborhoodBitmap> newStateBitmaps = new List<NeighborhoodBitmap>();
 
         private NeighborhoodBitmap neighborhoodBitmap;
         private NeighborhoodBitmap newStateBitmap;
@@ -75,24 +86,15 @@ namespace CellularGUI.RuleManager
         {
             CurrentRule = rule;
             Editor = ruleEditorCycle.Editor;
-
-            init();
         }
 
         /// <summary>
         ///     Used to create new rule window
         /// </summary>
         /// <param name="type"></param>
-        public RuleEditor(RuleEditorCycle ruleEditorCycle, NeighborhoodType neighborhoodType, RuleType ruleType)
+        public RuleEditor(RuleEditorCycle ruleEditorCycle)
         {
-            this.ruleType = ruleType;
-            NeighborhoodType = neighborhoodType;
-
-            CurrentRule = new Rule(NeighborhoodType);
-
             Editor = ruleEditorCycle.Editor;
-
-            init();
         }
 
         /*******************************************************************/
@@ -152,6 +154,8 @@ namespace CellularGUI.RuleManager
             nameTextBox.HorizontalAlignment = HorizontalAlignment.Left;
             nameTextBox.VerticalAlignment = VerticalAlignment.Center;
             nameTextBox.Margin = new Thickness(40, 0, 0, 0);
+            nameTextBox.TextChanged += nameTextBox_TextChanged;
+            CurrentRule.Name = "Rule";
 
             Editor.Children.Add(nameTextBlock);
             Editor.Children.Add(nameTextBox);
@@ -160,6 +164,11 @@ namespace CellularGUI.RuleManager
 
             nameTextBlock.SetValue(Grid.ColumnSpanProperty, 2);
             nameTextBox.SetValue(Grid.ColumnSpanProperty, 2);
+        }
+
+        void nameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            CurrentRule.Name = nameTextBox.Text;
         }
 
         private void initListView()
@@ -246,30 +255,37 @@ namespace CellularGUI.RuleManager
              * */
         }
 
-        void newStateImage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void loadTransitions()
         {
-            System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
-            newStateBitmap.FillCellByImagePoint(point, newStateImage);
-        }
-
-        void neighborhoodImage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
-            neighborhoodBitmap.FillCellByImagePoint(point, neighborhoodImage);
-        }
-
-        private void newTransitionButton_Click(object sender, RoutedEventArgs e)
-        {
-            Neighborhood nb = neighborhoodBitmap.ToNeighborhood();
-
-            int newState = newStateBitmap.LocalCell;
+            neighborhoodBitmaps = new List<NeighborhoodBitmap>();
+            newStateBitmaps = new List<NeighborhoodBitmap>();
 
             if (ruleType == RuleType.Detailed)
             {
-                DetailedTransition transition = new DetailedTransition(nb, newState);
-                CurrentRule.AddTransition(transition);
-            }
+                for (int i = 0; i < CurrentRule.TransitionCount; i++)
+                {
+                    DetailedTransition transition = (DetailedTransition)CurrentRule.GetTransition(i);
+                    Neighborhood nb = transition.Neighborhood;
+                    int newState = transition.NewState;
 
+                    int localCell = nb.LocalCell;
+                    int[] neighbors = new int[nb.neighbors.Count()];
+                    for (int j = 0; j < nb.neighbors.Count(); j++)
+                    {
+                        neighbors[j] = nb.neighbors[j];
+                    }
+
+                    NeighborhoodBitmap nbBmp = new NeighborhoodBitmap(NeighborhoodType, localCell, neighbors);
+
+                    NeighborhoodBitmap newStateBmp = new NeighborhoodBitmap(NeighborhoodType.None, newState, neighbors);
+
+                    addListViewItem(nbBmp, newStateBmp);
+                }
+            }
+        }
+
+        private void addListViewItem(NeighborhoodBitmap neighborhoodBitmap, NeighborhoodBitmap newStateBitmap)
+        {
             Image image1 = new Image();
             Image image2 = new Image();
             image1.Width = 50;
@@ -278,8 +294,11 @@ namespace CellularGUI.RuleManager
             image2.Width = 15;
             image2.Height = 15;
 
-            image1.Source = neighborhoodImage.Source;
-            image2.Source = newStateImage.Source;
+            image1.Source = neighborhoodBitmap.Bitmap;
+            image2.Source = newStateBitmap.Bitmap;
+
+            neighborhoodBitmaps.Add(neighborhoodBitmap);
+            newStateBitmaps.Add(newStateBitmap);
 
             StackPanel stackPanel = new StackPanel();
 
@@ -294,14 +313,74 @@ namespace CellularGUI.RuleManager
             listViewItem.Foreground = Brushes.White;
 
             ruleListView.Items.Add(listViewItem);
+        }
 
-            initTransitionImage();
+        private void updateTransition()
+        {
+            if (lastItemSelected == -1)
+                return;
+
+            Neighborhood nb = neighborhoodBitmaps[lastItemSelected].ToNeighborhood();
+            int newState = newStateBitmaps[lastItemSelected].LocalCell;
+
+            if (ruleType == RuleType.Detailed)
+            {
+                DetailedTransition transition = new DetailedTransition(nb, newState);
+                CurrentRule.Replace(transition, lastItemSelected);
+            }
+        }
+
+        private void addNewTransition()
+        {
+            Neighborhood nb = neighborhoodBitmap.ToNeighborhood();
+
+            int newState = newStateBitmap.LocalCell;
+
+            if (ruleType == RuleType.Detailed)
+            {
+                DetailedTransition transition = new DetailedTransition(nb, newState);
+                CurrentRule.AddTransition(transition);
+            }
+
+            addListViewItem(neighborhoodBitmap, newStateBitmap); 
+        }
+
+        void newStateImage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
+            newStateBitmap.FillCellByImagePoint(point, newStateImage);
+
+            updateTransition();
+        }
+
+        void neighborhoodImage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            System.Windows.Point point = e.GetPosition(e.Source as FrameworkElement);
+            neighborhoodBitmap.FillCellByImagePoint(point, neighborhoodImage);
+
+            updateTransition();
+        }
+
+        private void newTransitionButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(ruleListView.Items.Count > 0)
+                initTransitionImage();
+            addNewTransition();
+            this.ruleListView.SelectedIndex = this.ruleListView.Items.Count;
         }
 
         void ruleListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            /*
             ListViewItem list = this.ruleListView.SelectedItems[0] as ListViewItem;
+
+            int i = 0;
+            for (i = 0; i < ruleListView.Items.Count; i++)
+            {
+                if (list == ruleListView.Items[i])
+                    break;
+            }
+
+            lastItemSelected = i;
 
             StackPanel stackPanel = list.Content as StackPanel;
 
@@ -310,12 +389,83 @@ namespace CellularGUI.RuleManager
 
             this.neighborhoodImage.Source = image1.Source;
             this.newStateImage.Source = image2.Source;
-             * */
-        }
 
+            neighborhoodBitmap = neighborhoodBitmaps[lastItemSelected];
+            newStateBitmap = newStateBitmaps[lastItemSelected];
+        }
 
         /*******************************************************************/
         /************************* PUBLIC METHODS **************************/
         /*******************************************************************/
+
+        public void SafeRuleToFile()
+        {
+            if (nameTextBox == null)
+                return;
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.OK)
+            {
+                string path = dialog.SelectedPath;
+
+                string name = nameTextBox.Text;
+                CurrentRule.Name = name;
+
+                string filepath = path + "/" + name + FILE_EXTENTION;
+
+                IFormatter formatter = new BinaryFormatter();
+                Stream stream = new FileStream(filepath, FileMode.Create, FileAccess.Write, FileShare.None);
+                formatter.Serialize(stream, CurrentRule);
+                stream.Close();
+            }
+        }
+
+        public void StartEditRule(Rule rule)
+        {
+            if (rule == null)
+                return;
+
+            CurrentRule = rule;
+
+            this.ruleType = CurrentRule.RuleType;
+            NeighborhoodType = CurrentRule.NeighborhoodType;
+
+            init();
+            loadTransitions();
+            nameTextBox.Text = CurrentRule.Name;
+        }
+
+        public void StartLoadRule(string filepath)
+        {
+            lastItemSelected = -1;
+
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(filepath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            Rule rule;
+            try
+            {
+                rule = (Rule)formatter.Deserialize(stream);
+            }
+            catch (InvalidCastException e) { return; }
+            
+            stream.Close();
+            StartEditRule(rule);
+        }
+
+        public void StartNewRule(NeighborhoodType neighborhoodType, RuleType ruleType)
+        {
+            neighborhoodBitmaps = new List<NeighborhoodBitmap>();
+            newStateBitmaps = new List<NeighborhoodBitmap>();
+
+            lastItemSelected = -1;
+
+            this.ruleType = ruleType;
+            NeighborhoodType = neighborhoodType;
+
+            CurrentRule = new Rule(NeighborhoodType, ruleType);
+
+            init();
+        }
     }
 }

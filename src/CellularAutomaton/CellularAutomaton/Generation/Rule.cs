@@ -1,6 +1,7 @@
 ﻿using CellularAutomaton.Neighborhoods;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,8 @@ namespace CellularAutomaton.Generation
     ///     Rule is a set of Transitions, which is used to
     ///     compute next generation of the Automaton
     /// </summary>
-    public class Rule
+    [Serializable]
+    public class Rule//: INotifyPropertyChanged
     {
         /******************************************************************/
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
@@ -22,6 +24,15 @@ namespace CellularAutomaton.Generation
         ///     in this rule
         /// </summary>
         private List<Transition> transitions = new List<Transition>();
+
+        private int transitionCount;
+
+        public int TransitionCount
+        {
+            get { return transitionCount; }
+            private set { transitionCount = value; }
+        }
+
 
         /// <summary>
         ///     The dafualt transition is used when no transition
@@ -55,13 +66,12 @@ namespace CellularAutomaton.Generation
             set { ruleType = value; }
         }
 
-
         private string name;
 
         public string Name
         {
             get { return name; }
-            set { name = value; }
+            set { name = value; /*OnPropertyChanged("Name");*/ }
         }
 
 
@@ -69,9 +79,11 @@ namespace CellularAutomaton.Generation
         /************************** CONSTRUCTORS **************************/
         /******************************************************************/
 
-        public Rule(NeighborhoodType neighborhoodType)
+        public Rule(NeighborhoodType neighborhoodType, RuleType ruleType)
         {
+            TransitionCount = 0;
             NeighborhoodType = neighborhoodType;
+            RuleType = ruleType;
             //defaultTransition = new Transition();
         }
 
@@ -84,6 +96,7 @@ namespace CellularAutomaton.Generation
         /// <param name="defaultTransition"></param>
         public Rule(NeighborhoodType neighborhoodType, Transition defaultTransition)
         {
+            TransitionCount = 0;
             NeighborhoodType = neighborhoodType;
             this.defaultTransition = defaultTransition;
         }
@@ -91,8 +104,17 @@ namespace CellularAutomaton.Generation
         /*******************************************************************/
         /************************ PRIVATE METHODS **************************/
         /*******************************************************************/
-
-
+        /*
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
+        */
 
         /*******************************************************************/
         /************************* PUBLIC METHODS **************************/
@@ -106,16 +128,25 @@ namespace CellularAutomaton.Generation
         /// </param>
         public void AddTransition(Transition transition)
         {
+            TransitionCount++;
             transitions.Add(transition);
         }
 
         public void AddTransitionAt(Transition transition, int i)
         {
+            TransitionCount++;
+            transitions.Insert(i, transition);
+        }
+
+        public void Replace(Transition transition, int i)
+        {
+            transitions.RemoveAt(i);
             transitions.Insert(i, transition);
         }
 
         public void RemoveAt(int i)
         {
+            TransitionCount--;
             transitions.RemoveAt(i);
         }
 
@@ -127,7 +158,13 @@ namespace CellularAutomaton.Generation
         /// </param>
         public void RemoveTransition(Transition transition)
         {
+            TransitionCount--;
             transitions.Remove(transition);
+        }
+
+        public Transition GetTransition(int i)
+        {
+            return transitions[i];
         }
 
         /// <summary>

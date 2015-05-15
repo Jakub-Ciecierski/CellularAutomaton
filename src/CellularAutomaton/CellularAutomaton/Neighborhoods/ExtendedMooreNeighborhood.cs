@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CellularAutomaton.Neighborhoods
 {
+    [Serializable]
     public class ExtendedMooreNeighborhood : Neighborhood
     {
         public ExtendedMooreNeighborhood(int localCell, int[] neighbors)

@@ -1,6 +1,7 @@
 ﻿using CellularAutomaton;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace CellularGUI
     /// <summary>
     ///     Repeats next generation process
     /// </summary>
-    public class AutomatonDispatcher
+    public class AutomatonDispatcher : INotifyPropertyChanged
     {
         /******************************************************************/
         /******************* PROPERTIES, PRIVATE FIELDS *******************/
@@ -28,6 +29,7 @@ namespace CellularGUI
             { 
                 speed = value;
                 timer.Interval = new TimeSpan(0, 0, 0, 0, speed);
+                OnPropertyChanged("Speed");
             }
         }
 
@@ -60,6 +62,16 @@ namespace CellularGUI
             automaton.NextGeneration();
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged(string name)
+        {
+            PropertyChangedEventHandler handler = PropertyChanged;
+            if (handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(name));
+            }
+        }
+
         /*******************************************************************/
         /************************* PUBLIC METHODS **************************/
         /*******************************************************************/
@@ -73,5 +85,6 @@ namespace CellularGUI
         {
             timer.Stop();
         }
+
     }
 }

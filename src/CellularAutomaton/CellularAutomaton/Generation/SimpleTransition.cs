@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace CellularAutomaton.Generation
 {
+    [Serializable]
     public class SimpleTransition : Transition
     {
         /******************************************************************/

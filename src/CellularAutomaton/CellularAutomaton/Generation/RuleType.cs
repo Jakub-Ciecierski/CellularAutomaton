@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CellularAutomaton.Generation
 {
+    [Serializable]
     public enum RuleType
     {
         Detailed,

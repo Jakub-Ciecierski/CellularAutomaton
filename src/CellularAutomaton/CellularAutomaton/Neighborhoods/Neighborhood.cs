@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CellularAutomaton.Neighborhoods
 {
+    [Serializable]
     public abstract class Neighborhood
     {
         /// <summary>
@@ -20,7 +21,7 @@ namespace CellularAutomaton.Neighborhoods
         /// <summary>
         ///     The actual neighbors in the cell's vicinity
         /// </summary>
-        protected int[] neighbors;
+        public int[] neighbors;
 
         public Neighborhood(int localCell, int[] neighbors)
         {

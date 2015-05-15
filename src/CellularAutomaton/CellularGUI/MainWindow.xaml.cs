@@ -6,7 +6,10 @@ using CellularGUI.RuleManager;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,6 +31,8 @@ namespace CellularGUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private const string FILE_EXTENTION = ".pt";
+
         /// <summary>
         ///     Checks if mouse is being draged
         /// </summary>
@@ -40,6 +45,9 @@ namespace CellularGUI
 
         int gridWidth = 100;
         int gridHeight = 100;
+
+        const int MAX_WIDTH = 500;
+        const int MAX_HEIGHT = 500;
 
         CellularGrid cellularGrid;
         Automaton automaton;
@@ -63,10 +71,26 @@ namespace CellularGUI
             InitializeComponent();
 
             ruleEditorCycle = new RuleEditorCycle(this.ruleEditorMainGrid);
+            widthTextBox.Text = gridWidth.ToString();
+            heightTextBox.Text = gridHeight.ToString();
 
             windowsSettings();
             
             initAutomaton();
+
+            initDataContext();
+        }
+
+        private void initDataContext()
+        {
+            /*
+            this.DataContext = new 
+            {
+                automatonTimer, automaton.CurrentRule 
+            };
+             * */
+
+            this.DataContext = automatonTimer;
         }
 
         private void windowsSettings()
@@ -76,14 +100,32 @@ namespace CellularGUI
 
         private void initAutomaton()
         {
+            gridWidth = Convert.ToInt32(widthTextBox.Text);
+            gridHeight = Convert.ToInt32(heightTextBox.Text);
+
+            if (gridWidth > MAX_WIDTH)
+            {
+                widthTextBox.Text = MAX_WIDTH.ToString();
+            }
+            if (gridHeight > MAX_HEIGHT)
+            {
+                heightTextBox.Text = MAX_HEIGHT.ToString();
+            }
+
             cellularGrid = new CellularGrid(gridHeight, gridWidth);
             automaton = new Automaton(cellularGrid);
 
+            initAutomatonComponents();
+        }
+
+        private void initAutomatonComponents()
+        {
+            currentRuleTextBlock.Text = "None";
             automatonBitmap = new AutomatonBitmap(automaton, automatonImage);
 
             automatonTimer = new AutomatonDispatcher(automaton, speed);
 
-            automaton.CurrentRule = convwaysGameOfLife();
+            //applyRule(convwaysGameOfLife());
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -190,7 +232,8 @@ namespace CellularGUI
 
         private void generationButton_Click(object sender, RoutedEventArgs e)
         {
-            automatonTimer.Start();
+            if(automaton.CurrentRule != null)
+                automatonTimer.Start();
         }
 
         private void stopGenerationButton_Click(object sender, RoutedEventArgs e)
@@ -204,8 +247,8 @@ namespace CellularGUI
 
         private Rule convwaysGameOfLife()
         {
-            Rule rule = new Rule(NeighborhoodType.Moore);
-
+            Rule rule = new Rule(NeighborhoodType.Moore, RuleType.Detailed);
+            rule.Name = "Convways";
             
             int[] transitionMap1 = { CellStates.ALIVE, -1, 0 };
             SimpleTransition transition1 = new SimpleTransition(transitionMap1, CellStates.DEAD);
@@ -322,7 +365,41 @@ namespace CellularGUI
 
         private void stepGenerationButton_Click(object sender, RoutedEventArgs e)
         {
+            if (automaton.CurrentRule == null)
+                return;
             automaton.NextGeneration();
+        }
+
+        private void applyRule(Rule rule)
+        {
+            if (rule == null)
+                return;
+            automaton.CurrentRule = rule;
+            currentRuleTextBlock.Text = rule.Name;
+        }
+
+        private void loadPattern(string filename)
+        {
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read);
+
+            try
+            {
+                automaton = (Automaton)formatter.Deserialize(stream);
+            }
+            catch (InvalidCastException ex) { return; }
+
+            stream.Close();
+
+            zoomValue = 1.0;
+
+            widthTextBox.Text = automaton.Grid.Width.ToString();
+            heightTextBox.Text = automaton.Grid.Height.ToString();
+            if (automaton.CurrentRule != null)
+                currentRuleTextBlock.Text = automaton.CurrentRule.Name;
+            patternNameTextBox.Text = automaton.Name;
+
+            initAutomatonComponents();
         }
 
         /// <summary>
@@ -338,8 +415,124 @@ namespace CellularGUI
         private void applyRuleButton_Click(object sender, RoutedEventArgs e)
         {
             if (ruleEditorCycle.RuleEditor != null)
-                automaton.CurrentRule = ruleEditorCycle.RuleEditor.CurrentRule;
+                applyRule(ruleEditorCycle.RuleEditor.CurrentRule);
         }
 
+        private void saveRuleButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ruleEditorCycle.RuleEditor != null)
+                ruleEditorCycle.RuleEditor.SafeRuleToFile();
+        }
+
+        private void newAutomatonButton_Click(object sender, RoutedEventArgs e)
+        {
+            automatonTimer.Stop();
+            initAutomaton();
+        }
+
+        private void savePatternButton_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
+            System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+            if(result == System.Windows.Forms.DialogResult.OK)
+            {
+                string path = dialog.SelectedPath;
+                string name = path + "/" + patternNameTextBox.Text + FILE_EXTENTION;
+                IFormatter formatter = new BinaryFormatter();
+                Stream stream = new FileStream(name, FileMode.Create, FileAccess.Write, FileShare.None);
+                formatter.Serialize(stream, automaton);
+                stream.Close();
+            }
+        }
+
+        private void editRuleButton_Click(object sender, RoutedEventArgs e)
+        {
+            ruleEditorCycle.RuleEditor.StartEditRule(automaton.CurrentRule);
+        }
+
+        private void ruleDropFileHandler(object sender, DragEventArgs e)
+        {
+            string[] filenames = (string[])e.Data.GetData(DataFormats.FileDrop, true);
+            ruleEditorCycle.RuleEditor.StartLoadRule(filenames[0]);
+            
+        }
+        private void automatonDropFileHandler(object sender, DragEventArgs e)
+        {
+            string[] filenames = (string[])e.Data.GetData(DataFormats.FileDrop, true);
+            loadPattern(filenames[0]);
+
+        }
+        private void loadPattern_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.FileName = "Pattern"; // Default file name
+            dlg.DefaultExt = ".pt"; // Default file extension
+            dlg.Filter = "Pattern (*.pt) | *.pt";
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process open file dialog box results 
+            if (result == true)
+            {
+                // Open document 
+                string filename = dlg.FileName;
+
+                loadPattern(filename); 
+            }
+        }
+
+        private void loadRule_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+            dlg.FileName = "Rule"; // Default file name
+            dlg.DefaultExt = ".rl"; // Default file extension
+            dlg.Filter = "Rule (*.rl) | *.rl";
+
+            // Show open file dialog box
+            Nullable<bool> result = dlg.ShowDialog();
+
+            // Process open file dialog box results 
+            if (result == true)
+            {
+                // Open document 
+                string filename = dlg.FileName;
+
+                ruleEditorCycle.RuleEditor.StartLoadRule(filename);
+            }
+        }
+
+        
+        private void showGuide_Click(object sender, RoutedEventArgs e)
+        {
+            //guideGridSplitter.
+        }
+
+        
+        void patternTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(automaton != null)
+                automaton.Name = patternNameTextBox.Text;
+        }
+
+        private void closeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SystemCommands.CloseWindow(this);
+        }
+
+        private void maximizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            //SystemCommands.MaximizeWindow(this);
+            if (!isMaximized)
+                MaximizeWindow();
+            else
+                Restore();
+        }
+
+        private void minimizeButton_Click(object sender, RoutedEventArgs e)
+        {
+            SystemCommands.MinimizeWindow(this);
+        }
+            
     }
 }

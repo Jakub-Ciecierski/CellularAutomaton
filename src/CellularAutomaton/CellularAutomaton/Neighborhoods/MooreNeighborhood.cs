@@ -13,6 +13,7 @@ namespace CellularAutomaton.Neighborhoods
     ///     
     ///     NW - north west, etc.
     /// </summary>
+    [Serializable]
     public class MooreNeighborhood : Neighborhood
     {
         /// <summary>

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace CellularAutomaton.Neighborhoods
 {
+    [Serializable]
     public enum NeighborhoodType
     {
         Neumann,

@@ -42,6 +42,7 @@ namespace CellularGUI.RuleManager
         public RuleEditorCycle(Grid editor)
         {
             Editor = editor;
+            ruleEditor = new RuleEditor(this);
         }
 
         /*******************************************************************/
@@ -64,7 +65,7 @@ namespace CellularGUI.RuleManager
 
         public void RunRuleEditor(NeighborhoodType neighborhoodType, RuleType ruleType)
         {
-            ruleEditor = new RuleEditor(this, neighborhoodType, ruleType);
+            ruleEditor.StartNewRule(neighborhoodType, ruleType);
         }
     }
 }

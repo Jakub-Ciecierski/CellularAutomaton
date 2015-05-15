@@ -2,6 +2,7 @@
 using CellularAutomaton.Neighborhoods;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace CellularAutomaton
     ///     Holds information about the grid of cells, 
     ///     current rule.
     /// </summary>
+    [Serializable]
     public class Automaton
     {
         /******************************************************************/
@@ -35,7 +37,15 @@ namespace CellularAutomaton
             get { return grid; }
             private set { grid = value; }
         }
-        
+
+        private string name;
+
+        public string Name
+        {
+            get { return name; }
+            set { name = value;}
+        }
+
 
         /// <summary>
         ///     Current rule of the automaton

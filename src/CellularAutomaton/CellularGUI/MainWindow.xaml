@@ -1,7 +1,8 @@
 ﻿<Window x:Class="CellularGUI.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="450" Width="759" Loaded="Window_Loaded"
+        AllowDrop="True"
+        Title="MainWindow" Height="650" Width="859" Loaded="Window_Loaded"
         WindowStyle="None" BorderThickness="1"
         ResizeMode="CanResizeWithGrip"
         AllowsTransparency="True"
@@ -10,6 +11,7 @@
     <Window.Resources>
         <SolidColorBrush x:Key="ComponentBorderColor" Color="#FFD6711C" />
         <SolidColorBrush x:Key="BackgroundColor" Color="#FF1F1F1F" />
+
 
         <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource ResourceKey={x:Type MenuItem}}">
             <Setter Property="Background" Value="#FF383838"/>
@@ -330,7 +332,7 @@
 
     <!-- MAIN APPLICATION GRID -->
     <Grid>
-        
+
         <Grid.RowDefinitions>
             <!-- TOPPER, WHERE YOU CAN DRAG THE WINDOW, CLOSE BUTTONS ETC -->
             <RowDefinition Height="30"/>
@@ -342,10 +344,27 @@
 
         <!-- TOPPER #FF212020-->
         <Grid Background="#FF212020" Grid.Row="0" MouseLeftButtonDown="Grid_MouseLeftButtonDown">
+
+            <Grid.ColumnDefinitions>
+
+                <ColumnDefinition Width="*" />
+
+                <ColumnDefinition Width="*" />
+
+            </Grid.ColumnDefinitions>
             <TextBlock x:Name="nameTextBlock" Foreground="White" 
                             HorizontalAlignment="Left" Margin="10,0,0,9" VerticalAlignment="Bottom"
                             TextWrapping="Wrap" 
-                            Text="Cellular Automaton" />
+                            Text="Cellular Automaton" 
+                       Grid.Column="0"/>
+            <DockPanel Grid.Column="1" HorizontalAlignment="Right" LastChildFill="False" Margin="0"
+                    VerticalAlignment="Top">
+                
+                <Button x:Name="closeButton" DockPanel.Dock="Right"  Content="X"   Width="25" Height="25" Margin="10 0 0 0" Click="closeButton_Click"/>
+                <Button x:Name="maximizeButton" DockPanel.Dock="Right" Content="[  ]"  Width="25"  Margin="10 0 0 0" Click="maximizeButton_Click"/>
+                <Button x:Name="minimizeButton" DockPanel.Dock="Right" Content="-" Width="25" Click="minimizeButton_Click"  />
+                
+            </DockPanel>
         </Grid>
 
         <!-- CONTENT GRID -->
@@ -393,35 +412,22 @@
                    Foreground="White">
 
                 <MenuItem Header="_File" >
-                    <MenuItem x:Name="loadPicture" Header="Load">
-
-                    </MenuItem>
+                    <MenuItem x:Name="loadPatternMenu" Header="Load Pattern" Click="loadPattern_Click"/>
+                    <MenuItem x:Name="loadRule" Header="Load Rule" Click="loadRule_Click"/>
                 </MenuItem>
 
-                <MenuItem Header="View" >
-                    <MenuItem x:Name="view" Header="Show Rule editor" >
-                        <MenuItem x:Name="view2" Header="Show Rule editor" />
-                    </MenuItem>
-                </MenuItem>
 
-                <MenuItem Header="Settings" >
-                    <MenuItem x:Name="settings1" Header="Grid editor" />
-                </MenuItem>
-
-                <MenuItem Header="Help" >
-                    <MenuItem x:Name="help1" Header="Help" />
-                </MenuItem>
             </Menu>
 
 
             <!-- 1.* GLOBAL BUTTONS -->
             <Grid Background="#FF383838" Grid.Row="1" Grid.ColumnSpan="6" >
-                
+
                 <Border Grid.Row="1" Grid.ColumnSpan="5" 
                         BorderBrush="Black" BorderThickness="0 1 0 2" 
                        >
                 </Border>
-                
+
                 <Button x:Name="generationButton" Content="Play" Width="45" 
                             Margin="10,6,0,8" HorizontalAlignment="Left" 
                             VerticalAlignment="Center" Click="generationButton_Click"/>
@@ -435,7 +441,7 @@
             </Grid>
 
             <!-- 2.1 SPLITTER -->
-            <GridSplitter Grid.Column="1" Grid.Row="2"
+            <GridSplitter x:Name="guideGridSplitter" Grid.Column="1" Grid.Row="2"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Stretch"
                 Background="{StaticResource ComponentBorderColor}" 
@@ -453,13 +459,24 @@
                 />
 
             <!-- 2.2 AUTOMATON GRID -->
-            <Grid Grid.Row="2" Grid.Column="2" Background="#FF1F1F1F" Grid.ColumnSpan="2">
+            <Grid Grid.Row="2" Grid.Column="2" Background="#FF1F1F1F" Grid.ColumnSpan="2" AllowDrop="True" Drop="automatonDropFileHandler">
+                <Grid.RowDefinitions>
+                    <!-- 0 Automaton -->
+                    <RowDefinition Height="*"/>
+
+                    <RowDefinition Height="4"/>
+
+                    <!-- 2 Info -->
+                    <RowDefinition Height="250"/>
+
+                </Grid.RowDefinitions>
+
                 <ScrollViewer x:Name="gridScollViewer"
-                        Grid.Column="2" Grid.Row="2"  
+                        Grid.Row="0"  
                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
                         ScrollViewer.VerticalScrollBarVisibility="Auto">
 
-                    <Image x:Name="automatonImage" Grid.Column="2" Grid.Row="2" 
+                    <Image x:Name="automatonImage" Grid.Row="0" 
                            MouseLeftButtonDown="automatonImage_MouseLeftButtonDown"
                            MouseLeftButtonUp="automatonImage_MouseLeftButtonUp"
                            MouseMove="automatonImage_MouseMove"
@@ -468,10 +485,106 @@
                            MouseWheel="image_MouseWheel" MouseDown="automatonImage_MouseDown" MouseUp="automatonImage_MouseUp" >
                     </Image>
                 </ScrollViewer>
+
+                <GridSplitter Grid.Row="1"
+                    ResizeDirection="Rows"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{StaticResource ComponentBorderColor}" 
+                    ShowsPreview="True"
+                    Width="Auto" Height="4"      
+                />
+
+                <ScrollViewer x:Name="gridInfoScollViewer"
+                        Grid.Row="2"  
+                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                    <Grid Grid.Row="2" Background="#FF2C2C2C" >
+
+                        <Grid.RowDefinitions>
+                            <!-- 0 Automaton -->
+                            <RowDefinition Height="30"/>
+
+                            <RowDefinition Height="*"/>
+
+                        </Grid.RowDefinitions>
+
+                        <Border  Margin="0,0,0,5" Grid.Row="0" Grid.ColumnSpan="5" 
+                            BorderBrush="Black" BorderThickness="2 2 2 2" 
+                            Background="#FF383838">
+                            <TextBlock Background="#FF383838" Foreground="White" 
+                                       TextWrapping="Wrap" Text="Grid Editor"/>
+                        </Border>
+
+                        <TextBox Grid.Row="1" HorizontalAlignment="Left" Height="23" 
+                                 Background="#FF1F1F1F"
+                                 Foreground="White" TextWrapping="Wrap" Text="{Binding Speed}" VerticalAlignment="Bottom" Width="50" Margin="41,0,0,16"/>
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Left" Margin="0,0,0,23" 
+                                   Background="#FF1F1F1F"
+                                   Foreground="White"
+                                   TextWrapping="Wrap" Text="Speed" VerticalAlignment="Bottom"/>
+
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Left" 
+                                   Background="#FF1F1F1F"
+                                   Foreground="White"
+                                   TextWrapping="Wrap" Text="Width" VerticalAlignment="Top" Margin="0,3,0,0"/>
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Left" Margin="0,28,0,0" 
+                                   Background="#FF1F1F1F"
+                                   Foreground="White"
+                                   TextWrapping="Wrap" Text="Height" VerticalAlignment="Top"/>
+                        <TextBox Grid.Row="1" x:Name="widthTextBox" HorizontalAlignment="Left" Height="23" Margin="41,0,0,0" 
+                                 Background="#FF1F1F1F"
+                                    Foreground="White"
+                                 TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+                        <TextBox Grid.Row="1" x:Name="heightTextBox" HorizontalAlignment="Left" Height="23" Margin="41,23,0,0" 
+                                 Background="#FF1F1F1F"
+                                  Foreground="White"
+                                 TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+                        <Button Grid.Row="1" x:Name="newAutomatonButton" Content="Apply Grid" HorizontalAlignment="Left" Margin="0,51,0,0" VerticalAlignment="Top" Width="75" Click="newAutomatonButton_Click"/>
+
+                        <!-- RULE -->
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Margin="0,28,16,0" 
+                                   Background="#FF1F1F1F"
+                                   Foreground="White"
+                                   TextWrapping="Wrap" Text="Current Rule:" VerticalAlignment="Top"/>
+
+
+                        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Margin="0,44,36,0" 
+                            x:Name="currentRuleTextBlock"
+                            Background="#FF1F1F1F"
+                            Foreground="White"
+                            TextWrapping="Wrap" VerticalAlignment="Top" Text="None">
+
+                        </TextBlock>
+
+                        <Button Grid.Row="1" x:Name="editRuleButton" Content="Edit Rule" HorizontalAlignment="Right" 
+                        	Margin="0,0,10,212" VerticalAlignment="Top" Width="75" Click="editRuleButton_Click" />
+
+
+                        <!-- PATTERN -->
+                        <Button Grid.Row="1" x:Name="savePatternButton" Content="Save pattern" HorizontalAlignment="Right" 
+                                Margin="0,0,10,32" VerticalAlignment="Bottom" Width="75" Click="savePatternButton_Click"/>
+
+                        <TextBlock Grid.Row="1" Margin="0,0,125,4" 
+                                   Background="#FF1F1F1F"
+                                   Foreground="White"
+                                   TextWrapping="Wrap" Text="Pattern Name" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                        <TextBox Grid.Row="1" x:Name="patternNameTextBox" HorizontalAlignment="Right" Height="23" Margin="296,177,0,0" 
+                                    Background="#FF1F1F1F"
+                                    Foreground="White"
+                                    TextWrapping="Wrap" Text="MyPattern" VerticalAlignment="Bottom" Width="120"
+                                 TextChanged="patternTextBox_TextChanged"/>
+
+                    </Grid>
+
+                </ScrollViewer>
+
+
             </Grid>
 
             <!-- 2.4 RULE EDITOR -->
-            <Grid Grid.Row="2" Grid.Column="5" >
+            <Grid Grid.Row="2" Grid.Column="5" AllowDrop="True" Drop="ruleDropFileHandler">
 
 
                 <Grid.RowDefinitions>
@@ -504,8 +617,11 @@
                             HorizontalAlignment="Left" Margin="10,5,5,5" Click="newRuleButton_Click" />
 
                 <Button x:Name="applyRuleButton" Grid.Row="1" Content="Apply" Width="55" 
-                             Margin="83,5,29,5" Click="applyRuleButton_Click" />
-                
+                             Margin="74,5,60,5" Click="applyRuleButton_Click" />
+
+                <Button x:Name="saveRuleButton" Content="Save" Width="55" 
+                             Margin="134,5,0,5" Click="saveRuleButton_Click" Grid.Row="1"  />
+
                 <ScrollViewer x:Name="ruleEditorScollViewer"
                         Grid.Row="2"  
                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -522,8 +638,8 @@
 
 
             <!-- 2.0 BROWSER -->
-            <Grid Grid.Row="2" Grid.Column="0" >
-                
+            <Grid  Grid.Row="2" Grid.Column="0" >
+
                 <Grid.RowDefinitions>
                     <!-- 0 TITLE ROW -->
                     <RowDefinition Height="25"/>
@@ -539,18 +655,49 @@
                 <Border Grid.Row="0" Grid.ColumnSpan="5" 
                         BorderBrush="Black" BorderThickness="2 0 2 2" 
                         Background="#FF383838">
+
+                    <Grid Grid.Row="0">
+                        <TextBlock Grid.Row="0" x:Name="browserText" Foreground="White" Margin="10,0,0,9" VerticalAlignment="Bottom"
+                            TextWrapping="Wrap" Text="Guide" HorizontalAlignment="Left" />
+                    </Grid>
                 </Border>
-                <Grid>
-                    <TextBlock Grid.Row="0" x:Name="browserText" Foreground="White" Margin="10,0,0,9" VerticalAlignment="Bottom"
-                            TextWrapping="Wrap" Text="Browser" HorizontalAlignment="Left" />
+                
+                <ScrollViewer
+                        Grid.Row="1"  
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+                <Grid Grid.Row="1">
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                        <RowDefinition Height="1*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid.ColumnDefinitions>
+
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Foreground="White" Margin="10,5,0,0" Grid.Row="0" TextWrapping="Wrap"
+                            Text="1) File managment. To open files either: Open them in File menu or Drag them into their respective Editors - rules into Rule Editor and patterns into Grid Editor" 
+                            Width="Auto" Height="Auto"/>
+                
+                    <TextBlock Foreground="White" Margin="10,119,0,0" Grid.Row="1" TextWrapping="Wrap"
+                               Text="2) Grid. Use scroll to zoom in and out. Hold middle mouse and drag the mouse to move around. Left mouse button draws alive cell, Right dead one." 
+                               Width="Auto" Height="Auto"/>
+                
+                    <TextBlock Foreground="White" HorizontalAlignment="Left" Margin="10,219,0,0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top"
+                               Text="3) Use Rule Editor to create new rules." Width="Auto" Height="Auto"/>
+
                 </Grid>
+                </ScrollViewer>
             </Grid>
 
             <!-- 3.* FOOTER GRID -->
             <Grid Grid.Row="3" Grid.ColumnSpan="6" Background="#FF212020">
                 <TextBlock x:Name="consoleTextBlock" Foreground="White" 
                            HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"
-                           TextWrapping="Wrap" Text="Running" />
+                           TextWrapping="Wrap" Text="App Running" />
 
             </Grid>
         </Grid>

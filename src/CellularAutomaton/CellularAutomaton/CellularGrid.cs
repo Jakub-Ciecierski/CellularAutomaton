@@ -10,6 +10,7 @@ namespace CellularAutomaton
     /// <summary>
     ///     Grid of cells used in automaton
     /// </summary>
+    [Serializable]
     public class CellularGrid
     {
         /******************************************************************/
@@ -60,6 +61,7 @@ namespace CellularAutomaton
         /// <summary>
         ///     Pointer to drawing function
         /// </summary>
+        [NonSerialized]
         private Action<int, int, int> drawCell;
 
         public Action<int, int, int> DrawCell

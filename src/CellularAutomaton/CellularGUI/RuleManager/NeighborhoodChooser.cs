@@ -198,14 +198,14 @@ namespace CellularGUI.RuleManager
 
             grid.Children.Add(textBlock);
             grid.Children.Add(detailedImage);
-            grid.Children.Add(simpleImage);
+            //grid.Children.Add(simpleImage);
             grid.Children.Add(border);
 
             textBlock.SetValue(Grid.RowProperty, 0);
             textBlock.SetValue(Grid.ColumnSpanProperty, 2);
 
             detailedImage.SetValue(Grid.RowProperty, 1);
-            detailedImage.SetValue(Grid.ColumnProperty, 0);
+            detailedImage.SetValue(Grid.ColumnSpanProperty, 2);
 
             simpleImage.SetValue(Grid.RowProperty, 1);
             simpleImage.SetValue(Grid.ColumnProperty, 1);
