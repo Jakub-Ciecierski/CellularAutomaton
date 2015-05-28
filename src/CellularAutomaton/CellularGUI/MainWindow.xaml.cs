@@ -120,7 +120,6 @@ namespace CellularGUI
 
         private void initAutomatonComponents()
         {
-            currentRuleTextBlock.Text = "None";
             automatonBitmap = new AutomatonBitmap(automaton, automatonImage);
 
             automatonTimer = new AutomatonDispatcher(automaton, speed);
@@ -397,6 +396,8 @@ namespace CellularGUI
             heightTextBox.Text = automaton.Grid.Height.ToString();
             if (automaton.CurrentRule != null)
                 currentRuleTextBlock.Text = automaton.CurrentRule.Name;
+            else
+                currentRuleTextBlock.Text = "None";
             patternNameTextBox.Text = automaton.Name;
 
             initAutomatonComponents();

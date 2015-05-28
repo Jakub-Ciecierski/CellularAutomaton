@@ -1,0 +1,321 @@
+\documentclass{article}
+
+\usepackage{pdfpages}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{tabu}
+\usepackage{xcolor,colortbl}
+\usepackage{enumitem}
+
+\newlist{legal}{enumerate}{10}
+\setlist[legal]{label*=\arabic*.}
+
+\begin{document}
+
+\vspace*{3ex}
+\begin{flushright}
+{\large 20 May 2015}
+\end{flushright}
+
+\begin{flushleft}
+{\large Jakub Ciecierski\\
+
+}
+\end{flushleft}
+
+\hskip3cm
+
+\begin{center}
+
+\Large {\bf
+	Cellular automaton
+}
+
+\Large {\bf 
+	Test documentation
+}
+
+\vskip2ex
+
+\vspace{60pt}
+\includegraphics[width=80mm]{images/mini.png} \\
+\end{center}
+
+\vskip20ex
+
+\newpage
+
+	\tableofcontents
+\newpage
+
+
+
+
+
+
+
+
+\section{Document metric}
+
+\begin{table}[h]
+\hspace*{-3.1cm}
+\large
+\begin{tabular}{|
+>{\columncolor[HTML]{C0C0C0}}l |l|l|l|l|l|}
+\hline
+\multicolumn{6}{|l|}{\cellcolor[HTML]{C0C0C0}Document metric}                                                                                                                                         \\ \hline
+Project:       & Cellular Automaton                                                       & \cellcolor[HTML]{C0C0C0}Company: & \multicolumn{3}{l|}{WUT}                                               \\ \hline
+Name:          & \multicolumn{5}{l|}{Test Documentation}                                                                                                                                       \\ \hline
+Topics:        & \multicolumn{5}{l|}{Test Documentation}                                                                                                                                       \\ \hline
+Author:        & \multicolumn{5}{l|}{Jakub Ciecierski}                                                                                                                                                \\ \hline
+File:          & \multicolumn{5}{l|}{test\_report.pdf}                                                                                                                                      \\ \hline
+Version no:    & 1.0                                                                      & \cellcolor[HTML]{C0C0C0}Status:  & Being Tested & \cellcolor[HTML]{C0C0C0}Opening date: & 2015-03-03 \\ \hline
+Summary:       & \multicolumn{5}{l|}{Technical documentation for cellular automaton}                                                                                                           \\ \hline
+Authorized by: & \begin{tabular}[c]{@{}l@{}}Władysław Homenda\\ Lucjan Stapp\end{tabular} & \multicolumn{3}{l|}{\cellcolor[HTML]{C0C0C0}Last modification date:}                         & 2015-05-20 \\ \hline
+\end{tabular}
+\end{table}
+
+
+
+\section{History of changes}
+
+	\begin{table}[h]
+		\hspace*{-2.1cm}
+		\large
+		\begin{tabular}{|l|l|l|l|}
+		\hline
+		\multicolumn{4}{|l|}{\cellcolor[HTML]{C0C0C0}History of Changes} \\ \hline
+		Version         & Date         & Who        & Description        \\ \hline
+		1.0         & 2015-05-20         & Jakub Ciecierski        & Definition of the main purpose of the document       \\ \hline
+		\end{tabular}
+	\end{table}
+
+
+
+
+
+\newpage
+
+
+
+
+\section{Introduction}
+The following test documentation contains evaluation of Cellular Automaton project
+designed by Alicja Kostrzewa and developed by Hubert Hunia.
+For vocabulary, refer to Business Analysis.
+	
+\section{Description of tests}
+Presented here are test cases grouped into several test scenarios.
+The idea for test scenarios is to chain test cases into sequences
+where each previous test case's result(output) starts next test case(input).
+
+\subsection{Test Scenarios}
+
+\begin{legal}
+% Test scenarios
+
+
+	\item Test scenario of basic application behaviour. 
+	\\ {\bf Estimated} time to complete: $0.5 hour$
+	\begin{legal}
+		\item Change size of the grid.
+		\\{\bf Expected:} The grid should resize.
+		
+		\item Draw few cells on the grid.
+		\\{\bf Expected:} Clicked cells should have changed color.
+		
+		\item Add and apply a rule.
+		\\{\bf Expected:} Notification of applied rule.
+
+		\item Inspect chosen rule applied on the grid.
+		\\{\bf Expected:} The rules previously applied to the grid
+		should be inspected.
+		
+		\item Play and pause the automaton simulation.
+		\\{\bf Expected:} The simulation should start after
+		pressing play, and stop for pause.
+		
+		\item Delete a rule
+		\\{\bf Expected:} Rule removed from a list, and its logic should not be included in the automaton generation computations.
+	\end{legal}
+	
+	
+	\item Test Scenario for correctly creating, applying and saving new rules.
+	Even though the automaton is being ran in this tests the actual correctness of computing new generation	is tested in later scenarios.
+	\\ {\bf Estimated} time to complete: $1 hour$
+	
+	\begin{legal} 
+		\item 
+		Choose a neighborhood - 4, 8, 24.
+		Repeat for each neighborhood.
+ 		\\{\bf Expected:} Window with visual representation of given 
+		neighborhood where a position and states of cells can be selected.
+		
+		\item Add two new rules
+		\\{\bf Expected:} Two rules added to a list which can then be selected.
+		
+		\item Applying rules to the automaton
+		\\{\bf Expected:} Automaton grid should inform user of changed rule and show which rules are currently applied.
+
+		\item Draw few cells on the grid
+		\\{\bf Expected:} Cells clicked should be colored 
+				
+		\item Run 4 steps
+		\\{\bf Expected:} Automaton grid should react to applied rules.
+		
+		\item Save rule to a file
+		\\{\bf Expected:} Rule should be saved to file system correctly.
+
+		\item Close the application and open it again.
+		\\{\bf Expected:} The application should close without error.
+		
+		\item Load a previously saved rule to the application
+		\\{\bf Expected:} The same rule set which was saved to be loaded.
+		
+		\item Repeat drawing cells(the same ones) and Run 4 steps.
+		\\{\bf Expected:} The same results should be expected as in previous test in this scenario.
+
+
+	\end{legal}
+	
+	\item Test scenario for correctness of computing generations.
+	\\ {\bf Estimated} time to complete: $0.5 hour$
+	\begin{legal}
+		\item Choose neighborhood, create and apply few rules.
+		Repeat for each neighborhood.
+		
+		\item Draw few cells on the grid and few single steps.
+		\\{\bf Expected:} The generation should be computed correctly with respect to the applied rules.
+
+	\end{legal}
+
+% Test scenarios
+\end{legal}
+
+\section{Test log}
+The results of each test case described in previous section. Each test is labelled either {\color{green}OK} or {\color{red}NOK} i.e. test was successful or it failed, respectively. The tests are enumerated the same as in the previous section thus the 
+description is left out, leaving only the id of each test.
+
+\subsection{Test results}
+\begin{legal}
+% Test scenarios
+	\item Test scenario of basic application behaviour.
+	\\ {\bf Actual} time to complete: $0.5 hour$
+	\begin{legal}
+		\item {\color{red}NOK}
+		\\{\bf Reason:} Not implemented.
+		
+		\item {\color{green}OK}
+		
+		\item {\color{green}OK}
+
+		\item {\color{red}NOK}
+		\\{\bf Reason:}
+		Double clicking on the rule elements in the list does not do anything.
+		No matter what was done, the rule could not have been inspected.
+
+		\item {\color{green}OK}
+		
+		\item {\color{green}OK}
+
+	\end{legal}
+	
+	
+	\item Test Scenario for correctly creating, applying and saving new rules.
+	Even though the automaton is being ran in this tests the actual correctness of computing new generation is tested in later scenarios.
+	\\ {\bf Actual} time to complete: $2 hours$
+		
+	\begin{legal} 
+		\item {\color{red}NOK}
+ 		\\{\bf Reason:} Selecting 'Neighborhood mode' in combo box, changes the number but the neighborhood window in the rule editor does not change, it is a hard coded 24 neighborhood.
+		
+		\item {\color{green}OK}
+		
+		\item {\color{red}NOK}
+		\\{\bf Reason:} Even though the rule can be added, it exists in the list, it does not appear to be applied to the grid.
+
+		\item {\color{green}OK}
+				
+		\item {\color{green}OK}
+		
+		\item {\color{red}NOK}
+		\\{\bf Reason:} The 'Save to file' button does not work. The file called 'constrains.txt' exists but appending new rules to it does not work.
+
+		\item {\color{green}OK}
+		
+		\item {\color{red}NOK}
+		\\{\bf Reason:} Since saving did not work, loading was impossible. After clicking 'Load', three rules appear which were prepared as an example.
+		
+		\item {\color{green}OK}
+
+	\end{legal}
+	
+	
+	\item Test scenario for correctness of computing generations.
+	\\ {\bf Actual} time to complete: $0.5 hour$
+	\begin{legal}
+		\item {\color{red}NOK}
+		\\{\bf Reason:} The rules did no apply to the grid.		
+		
+		\item {\color{red}NOK}
+		\\{\bf Reason:} The grid did not react correctly to newly created rules.
+
+	\end{legal}
+
+% Test scenarios
+\end{legal}
+\subsection{Summary}
+The prepared tests proved to fail on most of the functionalities, especially on the most important ones, i.e. 
+creating, applying and saving rules. These tests lasted for about 3 hours. The Test scenario number $2$ took more time than it was estimated. The reason for that was the hard to understand interface for rule manipulation. Till the very end of running tests, it was not clear if a given functionality was difficult to initiate or simply did not work.
+
+
+\section{Incident report}
+Events that require investigation. Grouped into three categories.
+
+	\begin{legal}
+		\item {\color{red}Critical}
+		\begin{legal}
+		
+			\item Saving rules to file does not work. The file exists, and has three examples saved 
+			but no rules are added to it after clicking 'save to file'.
+			
+			\item Adding new rules either does not work or is extremely counter intuitive.
+			The manual states that the rule does not compute the position of neighbors but its number.
+			Yet the rule editor uses a 5 by 5 grid where each neighbor can be triggered dead or alive.
+	
+			
+
+		\end{legal}		
+
+		\item {\color{orange}Major}
+		\begin{legal}
+
+
+			\item No way to save current pattern of the grid.
+			
+			\item Some actions can cause the application to show an error message with unhandled exception:
+			\begin{center}
+				\includegraphics[width=80mm]{images/error.png} \\
+			\end{center}		
+			Recorded actions that caused the error: double clicking many times on the elements of Rule List, clicking 'Delete' button when no rule is selected.
+		\end{legal}
+
+		\item {\color{blue}Minor}
+		\begin{legal}
+			\item The graphics of the grid flickers with every generation.
+		\end{legal}
+		
+	\end{legal}
+
+
+\section{Summary test protocol}
+The application being tested was clearly not finished. The only functionalities that seemed to work was loading prepared rules from the example and running them on the grid. The grid it self, gave a horrible flickering visual bug with each generation. Even though adding rules appended the list of rules, there was no functionality to edit it again or even to apply it to the grid. Saving rules to file does not work.
+Some actions caused the application to show an error message. 
+Resizing the grid and saving the pattern of a grid was not even implemented.
+
+Running tests lasted three hours. It was difficult to tell if a given functionality was counter intuitive or simply not working.
+
+Given the state of the application the final mark must be non other than: 
+{\color{red}Exclusion}. The application needs a lot of work to be accepted. Correctness of its functionalities must be the highest priority. However the application lacks a lot in being intuitive and clean, especially when it comes to rule manipulation and automaton visual generation steps.
+
+\end{document}
